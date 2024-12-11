@@ -11,11 +11,11 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-6 py-8">
         <div className="bg-white shadow-lg rounded-lg p-6">
-          <h2 className="text-2xl font-semibold mb-4">Welcome to Sharingbox Köln!</h2>
-          <p className="text-gray-700 leading-relaxed">
+          <h2 className="text-black font-semibold mb-4">Welcome to Sharingbox Köln!</h2>
+            <p className="text-black leading-relaxed">
             Sharingbox Köln is your go-to platform for sharing resources and connecting with the community. 
             Explore our features and start collaborating today.
-          </p>
+            </p>
           <div className="mt-6">
             <button className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition duration-300">
               Learn More
