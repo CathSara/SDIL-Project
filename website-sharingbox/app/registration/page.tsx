@@ -1,25 +1,61 @@
 "use client";
 
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const RegistrationPage: React.FC = () => {
+    const router = useRouter();
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
+    const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
-        // Check if the passwords match
-        if (password !== repeatPassword) {
-            setError('Passwords do not match');
-            return;
-        }
+    if (password !== repeatPassword) {
+        setError('Passwords do not match');
+        return;
+    }
 
-        // Submit the form if passwords match
-        setError('');
-        console.log('Form submitted');
+    const userData = {
+        phone_number: phoneNumber,
+        first_name: firstName,
+        last_name: lastName,
+        password: password
     };
+
+    try {
+        const response = await fetch('http://127.0.0.1:5000/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData)
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log(result.message);
+            alert('Registration successful! Redirecting to login page...');
+            router.push('/login')
+        } else if (response.status === 409) {
+            setError('An account with this phone number already exists. Redirecting to login...');
+            setTimeout(() => {
+                router.push('/login')
+            }, 3000);
+        } else {
+            const result = await response.json();
+            setError(result.message || 'Registration failed');
+        }
+    } catch (error) {
+        console.error(error);
+        setError('An error occurred during registration');
+    }
+};
+
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center justify-center">
@@ -45,6 +81,8 @@ const RegistrationPage: React.FC = () => {
                                 name="firstname"
                                 className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 placeholder="Enter your firstname"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
                                 required
                             />
                         </div>
@@ -59,20 +97,24 @@ const RegistrationPage: React.FC = () => {
                                 name="lastname"
                                 className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 placeholder="Enter your lastname"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
                                 required
                             />
                         </div>
 
                         <div className="mb-6">
-                            <label htmlFor="email" className="block text-gray-700 font-medium mb-3 text-lg">
-                                Email Address
+                            <label htmlFor="phone_number" className="block text-gray-700 font-medium mb-3 text-lg">
+                                Phone Number
                             </label>
                             <input
-                                type="email"
-                                id="email"
-                                name="email"
+                                type="tel"
+                                id="phone_number"
+                                name="phone_number"
                                 className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                placeholder="Enter your email address"
+                                placeholder="Enter your phone number"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
                                 required
                             />
                         </div>

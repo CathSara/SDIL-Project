@@ -1,0 +1,15 @@
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Pipenv and other dependency files
+.venv/
+*.egg-info/
+
+# DB migration
+migrations/
+
+# DB
+instance/
