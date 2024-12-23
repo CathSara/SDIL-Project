@@ -11,6 +11,6 @@ def seed_database():
     box_2 = create_box("Neighborhood Box", "Fuck My Life Straße 11")
 
     mug = create_item(image_path="/uploads/mug.jpg", category="dishes", title="Pretty mug", description="Red mug with snoopy", condition="flawless", weight=200.43, box=box_1, created_by=user_1)
-    #mug = handle_item(image_url="/uploads/mug.jpg", weight=200.43, box=box_1, created_by=user_1)
+    #ball = handle_item(image_url="https://cache.willhaben.at/mmo/2/187/340/2632_1352920125.jpg", weight=200.43, box=box_1, created_by=user_1)
     cup = create_item(image_path="/uploads/toaster.webp", category="household appliance", title="Toaster", description="Black toaster for two simultaneous toasts", condition="flawless", weight=989.94, box=box_2, created_by=user_2)
 

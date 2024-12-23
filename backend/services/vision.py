@@ -12,7 +12,7 @@ def analyze_image(image_url):
       {
         "role": "user",
         "content": [
-          {"type": "text", "text": "Analyze the object in this image and provide the following information: - Object type ('Material good' or 'No material good', exclude food items and vehicles from being material goods), - Category, - Title (name of the object), - Description (short explanation), - Condition (new, good, acceptable, poor)."},
+          {"type": "text", "text": "Analyze the object in this image and provide the following information: - Object type (choose from: 'Material good' or 'No material good', exclude food items and vehicles from being material goods), - Category, - Title (name of the object), - Description (short explanation), - Condition (choose from: 'new', 'good', 'acceptable', 'poor'). Answer by using the following format: object type: [result], category: [result], title: [result], description: [result], condition: [result]"},
           {
             "type": "image_url",
             "image_url": {
