@@ -12,7 +12,7 @@ def analyze_image(image_url):
       {
         "role": "user",
         "content": [
-          {"type": "text", "text": "Analyze the object in this image and provide the following information: - Object type (choose from: 'Material good' or 'No material good', exclude food items and vehicles from being material goods), - Category, - Title (name of the object), - Description (short explanation), - Condition (choose from: 'new', 'good', 'acceptable', 'poor'). Answer by using the following format: object type: [result], category: [result], title: [result], description: [result], condition: [result]"},
+          {"type": "text", "text": "Analyze the object in this image and provide the following information: Object type (choose from: 'Material good' or 'No material good', exclude food items from being material goods), Category, Title (name of the object), Description (short explanation in one sentence without commas and dots), Condition (choose from: 'new', 'good', 'acceptable', 'poor'). Answer in one line and by using the following format: Object type: [result], Category: [result], Title: [result], Description: [result], Condition: [result]"},
           {
             "type": "image_url",
             "image_url": {
@@ -33,7 +33,7 @@ def analyze_image(image_url):
         "condition": None
     }
     
-  for line in content.splitlines():
+  for line in content.split(", "):
       if "Object type:" in line:
           result["object_type"] = line.split("Object type:")[1].strip()
       elif "Category:" in line:
@@ -51,7 +51,7 @@ def allow_object(result):
   object_type = result.get("object_type", "").lower()
   condition = result.get("condition", "").lower()
 
-  if "material good" in object_type and condition not in ["poor"]:
+  if object_type not in ["no material good"] and condition not in ["poor"]:
         return True
   else:
     return False
