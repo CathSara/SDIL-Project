@@ -1,11 +1,21 @@
 import openai
+import base64
+import os
 from ..models.database_service import create_item
+from dotenv import load_dotenv
 
-#client = OpenAI()
+load_dotenv()
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
-openai.api_key = ''
+def encode_image(image_path):
+    file_path = os.getcwd() + "/website-sharingbox/public" + image_path
+    file_path = file_path.replace("\\","/")
+    with open(file_path, "rb") as image_file:
+        base64_image = base64.b64encode(image_file.read()).decode("utf-8")
+    return f"data:image/jpeg;base64,{base64_image}"
 
-def analyze_image(image_url):
+def analyze_image(image_path):
+  base64_image = encode_image(image_path)
   response = openai.ChatCompletion.create(
     model="gpt-4o-mini",
     messages=[
@@ -16,7 +26,7 @@ def analyze_image(image_url):
           {
             "type": "image_url",
             "image_url": {
-              "url": image_url,
+              "url": base64_image,
             },
           },
         ],
@@ -56,12 +66,12 @@ def allow_object(result):
   else:
     return False
 
-def handle_item(image_url, weight, box, created_by):
-  analysis_result = analyze_image(image_url)
+def handle_item(image_path, weight, box, created_by):
+  analysis_result = analyze_image(image_path)
   is_allowed = allow_object(analysis_result)
 
   if is_allowed:
-        create_item(image_url, analysis_result["category"], analysis_result["title"], analysis_result["description"], analysis_result["condition"], weight, box, created_by)
+        create_item(image_path, analysis_result["category"], analysis_result["title"], analysis_result["description"], analysis_result["condition"], weight, box, created_by)
         print(f"Item '{analysis_result['title']}' added to the database.")
   else:
         print(f"Item '{analysis_result['title']}' is not allowed.")
