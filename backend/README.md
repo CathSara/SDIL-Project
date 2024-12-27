@@ -2,7 +2,7 @@
 
 ## Initial Setup
 
-**Note**: These instructions are tailored for Linux systems. Steps might differ from other operating systems such as Windows or MacOS.
+**Note**: These instructions are tailored for Linux systems. Commands might differ from other operating systems such as Windows or MacOS.
 
 1. Install Python and Pip (if you don't have already):
 
