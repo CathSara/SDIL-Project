@@ -3,6 +3,7 @@
 import React from 'react';
 import Navigation from '../components/Navigation';
 
+/* Used help in ChatGPT to create dropdown menu and textfield */
 export default function Page() {
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center">
