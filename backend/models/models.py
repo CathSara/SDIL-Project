@@ -109,3 +109,19 @@ class User(db.Model):
             "password": self.password,
             "is_confirmed": self.is_confirmed
         }
+
+
+class Favorite(db.Model):
+    __tablename__ = 'favorites'
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name='fk_favorites_user_id'), primary_key=True)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id', name='fk_favorites_item_id'), primary_key=True)
+    created_at = db.Column(db.DateTime, default=func.now())
+
+    user = db.relationship('User', backref=db.backref('favorites', lazy='dynamic'))
+    item = db.relationship('Item', backref=db.backref('favorited_by', lazy='dynamic'))
+
+    def to_dict(self):
+        return {
+            "item_id": self.item_id,
+            "created_at": self.created_at
+        }

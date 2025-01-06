@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..models.database_service import get_items, get_item_by_id, update_item_as_reserved
+from ..models.database_service import add_favorite, get_items, get_item_by_id, get_user_favorites, is_item_favorited, remove_favorite, update_item_as_reserved
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -57,3 +57,52 @@ def reserve_item():
         return jsonify({'message': 'Item not found'}), 404
     else:
         return jsonify({'message': 'User not found'}), 404
+    
+
+# TODO: unreserve
+
+
+@inventory_bp.route('/favorize', methods=['POST'])
+def favorize_item():
+    item_id = request.args.get("item_id", None)
+    user_id = request.args.get("user_id", None)
+
+    success = add_favorite(user_id, item_id)
+    if success:
+        return jsonify({'message': 'Item is now favorited'}), 200
+    else:
+        return jsonify({'message': 'Item could not be favorited'}), 403
+
+
+@inventory_bp.route('/defavorize', methods=['POST'])
+def defavorize_item():
+    item_id = request.args.get("item_id", None)
+    user_id = request.args.get("user_id", None)
+
+    success = remove_favorite(user_id, item_id)
+    if success:
+        return jsonify({'message': 'Item is now dereserved'}), 200
+    else:
+        return jsonify({'message': 'Item could not be defavorized'}), 403
+
+
+@inventory_bp.route('/is_favorized', methods=['GET'])
+def is_favorized():
+    item_id = request.args.get("item_id", None)
+    user_id = request.args.get("user_id", None)
+
+    item_favorited = is_item_favorited(user_id, item_id)
+    return jsonify({'item_favorited': item_favorited}), 200
+
+
+@inventory_bp.route('/get_favorites', methods=['GET'])
+def get_favorites():
+    user_id = request.args.get("user_id", None)
+
+    favorites = get_user_favorites(user_id)
+
+    if favorites:
+        favorites_data = [favorite.to_dict() for favorite in favorites]
+        return jsonify(favorites_data), 200
+    else:
+        return jsonify({'message': 'No favorites found'}), 404

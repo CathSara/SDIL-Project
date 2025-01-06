@@ -1,6 +1,6 @@
 from sqlalchemy import or_
 from backend import db
-from backend.models.models import User, Item, Box
+from backend.models.models import User, Item, Box, Favorite
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, timezone
 
@@ -187,6 +187,35 @@ def get_items(box_id=None, category=None, search_string=None):
         check_and_update_reservation(item)
 
     return items
+
+
+##### FAVORITE #####
+
+def add_favorite(user_id, item_id):
+    if not is_item_favorited(user_id, item_id):
+        favorite = Favorite(user_id=user_id, item_id=item_id)
+        db.session.add(favorite)
+        db.session.commit()
+        return True
+    return False
+
+
+def remove_favorite(user_id, item_id):
+    favorite = Favorite.query.filter_by(user_id=user_id, item_id=item_id).first()
+    if favorite:
+        db.session.delete(favorite)
+        db.session.commit()
+        return True
+    return False
+
+
+def is_item_favorited(user_id, item_id):
+    return Favorite.query.filter_by(user_id=user_id, item_id=item_id).count() > 0
+
+
+def get_user_favorites(user_id):
+    return Favorite.query.filter_by(user_id=user_id).all()
+
 
 
 ##### GENERAL #####
