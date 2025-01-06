@@ -49,6 +49,7 @@ def confirm_user(user_id, token):
     user = User.query.filter_by(id=user_id).first()
     if user and token == "1234":
         user.is_confirmed = True
+        db.session.commit()
     return user, user.is_confirmed
 
 
@@ -188,30 +189,7 @@ def get_items(box_id=None, category=None, search_string=None):
     return items
 
 
-
-##### FAVORITING #####
-
-#def favorite_item(user_id, item_id):
-#    if user_id and item_id:
-#        user = User.query.get(user_id)
-#        item = Item.query.get(item_id)
-#        user.favorited_items.append(item)
-#        db.session.commit()
-##        return True
-    return False
-
-
-#def unfavorite_item(user_id, item_id):
-#    if user_id and item_id:
-#        user = User.query.get(user_id)
-#        item = Item.query.get(item_id)
-#        user.favorited_items.remove(item)
-#        db.session.commit()
-#        return True
-#    return False
-
-
-##### GENERAL ###
+##### GENERAL #####
 
 def delete_all_rows():
     """
