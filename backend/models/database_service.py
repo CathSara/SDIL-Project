@@ -131,6 +131,22 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     return "success"
 
 
+def update_item_as_unreserved(item_id, reserved_by_user_id):
+    item = Item.query.get(item_id)
+    if not item:
+        return "item_error"
+    print("ids", type(item.reserved_by_id), type(reserved_by_user_id))
+    if item.reserved_by_id == reserved_by_user_id:
+        print("enter")
+        item.reserved_by_id = None
+        item.reserved_at = None
+        item.reserved_until = None
+        db.session.commit()
+        return "success"
+    else:
+        return "conflict"
+
+
 def check_and_update_reservation(item):
     """
     Checks if the item's reservation has expired and unreserves it if necessary.
@@ -215,7 +231,6 @@ def is_item_favorited(user_id, item_id):
 
 def get_user_favorites(user_id):
     return Favorite.query.filter_by(user_id=user_id).all()
-
 
 
 ##### GENERAL #####
