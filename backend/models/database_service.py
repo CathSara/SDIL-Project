@@ -112,17 +112,22 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     Marks a specified item as reserved.
     """
     item = Item.query.get(item_id)
+    user = User.query.get(reserved_by_user_id)
+    if not item:
+        return "item_error"
+    
+    if not user:
+        return "user_error"
     if item.reserved_by_id != None:
         return "conflict"
-    if item:
-        current_time = datetime.now(timezone.utc)
-        new_time = current_time + timedelta(minutes=20)
-        item.reserved_by_id = reserved_by_user_id
-        item.reserved_at = current_time
-        item.reserved_until = new_time
-        db.session.commit()
-        return "success"
-    return None
+    
+    current_time = datetime.now(timezone.utc)
+    new_time = current_time + timedelta(minutes=20)
+    item.reserved_by_id = reserved_by_user_id
+    item.reserved_at = current_time
+    item.reserved_until = new_time
+    db.session.commit()
+    return "success"
 
 
 def check_and_update_reservation(item):

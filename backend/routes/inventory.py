@@ -53,5 +53,7 @@ def reserve_item():
         return jsonify({'message': 'Item is now reserved'}), 200
     if status == "conflict":
         return jsonify({'message': 'Item has already been reserved'}), 403
-    else:
+    if status == "item_error":
         return jsonify({'message': 'Item not found'}), 404
+    else:
+        return jsonify({'message': 'User not found'}), 404
