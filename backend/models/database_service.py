@@ -41,11 +41,11 @@ def create_user(phone_number, first_name, last_name, password_raw):
     return user, True
 
 
-def confirm_user(user, token):
+def confirm_user(user_id, token):
     """
     Confirms user through phone number (token is always "1234").
     """
-    user = User.query.filter_by(id=user.id).first()
+    user = User.query.filter_by(id=user_id).first()
     if user and token == "1234":
         user.is_confirmed = True
     return user, user.is_confirmed
