@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Navigation from '../components/Navigation';
 
 interface Item {
   id: number;
@@ -24,7 +25,7 @@ export default async function Page() {
           <h1 className="text-5xl font-extrabold text-center">Sharing Box Köln!</h1>
         </div>
       </header>
-
+      <Navigation />
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (

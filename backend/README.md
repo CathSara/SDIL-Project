@@ -2,6 +2,7 @@
 
 ## Initial Setup
 
+**Note**: These instructions are tailored for Linux systems. Commands might differ from other operating systems such as Windows or MacOS.
 
 1. Install Python and Pip (if you don't have already):
 
@@ -28,7 +29,16 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-5. Migrate the database:
+5. Set up an OpenAI API key:
+- Create an `.env` file in the root directory
+- Create an API key from your [OpenAI account](https://platform.openai.com/signup/)
+- Add the API key to the  `.env` file in the following format:
+
+```plaintext
+OPENAI_API_KEY='your_openai_api_key'
+```
+
+6. Migrate the database:
 
 ```
 export FLASK_APP=run.py
@@ -37,13 +47,13 @@ flask db migrate
 flask db upgrade
 ```
 
-6. Run the Flask application:
+7. Run the Flask application:
 
 ```
 python3 run.py
 ```
 
-7. While the Flask app is running, open another terminal tab. Within the SDIL-Project/ folder, seed the database by running:
+8. While the Flask app is running, open another terminal tab. Within the SDIL-Project/ folder, seed the database by running:
 
 ```
 export FLASK_APP=run.py
