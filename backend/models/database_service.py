@@ -135,11 +135,14 @@ def check_and_update_reservation(item):
     Checks if the item's reservation has expired and unreserves it if necessary.
     Lazy database checkup!
     """
-    if item.reserved_until and item.reserved_until < datetime.now(timezone.utc):
-        item.reserved_by_id = None
-        item.reserved_at = None
-        item.reserved_until = None
-        db.session.commit()
+    if item.reserved_until:
+        reserved_until_aware = item.reserved_until.replace(tzinfo=timezone.utc)
+
+        if reserved_until_aware < datetime.now(timezone.utc):
+            item.reserved_by_id = None
+            item.reserved_at = None
+            item.reserved_until = None
+            db.session.commit()
 
 
 def get_item_by_id(item_id):
