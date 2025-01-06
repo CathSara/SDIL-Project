@@ -112,6 +112,8 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     Marks a specified item as reserved.
     """
     item = Item.query.get(item_id)
+    if item.reserved_by_id != None:
+        return "conflict"
     if item:
         current_time = datetime.now(timezone.utc)
         new_time = current_time + timedelta(minutes=20)
@@ -119,8 +121,20 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
         item.reserved_at = current_time
         item.reserved_until = new_time
         db.session.commit()
-        return item
+        return "success"
     return None
+
+
+def check_and_update_reservation(item):
+    """
+    Checks if the item's reservation has expired and unreserves it if necessary.
+    Lazy database checkup!
+    """
+    if item.reserved_until and item.reserved_until < datetime.now(timezone.utc):
+        item.reserved_by_id = None
+        item.reserved_at = None
+        item.reserved_until = None
+        db.session.commit()
 
 
 def get_item_by_id(item_id):
@@ -132,6 +146,7 @@ def get_item_by_id(item_id):
     item = Item.query.get(item_id)
 
     if item:
+        check_and_update_reservation(item)
         item.number_of_views += 1
         db.session.commit()
     return item
@@ -158,6 +173,10 @@ def get_items(box_id=None, category=None, search_string=None):
         )
 
     items = query.all()
+
+    for item in items:
+        check_and_update_reservation(item)
+
     return items
 
 

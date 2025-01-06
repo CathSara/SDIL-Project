@@ -47,9 +47,11 @@ def get_item():
 def reserve_item():
     item_id = request.args.get("item_id", None)
     user_id = request.args.get("user_id", None)
-    reserved_item = update_item_as_reserved(item_id, user_id)
+    status = update_item_as_reserved(item_id, user_id)
 
-    if reserved_item:
-        return jsonify(reserved_item.to_detail_dict()), 200
+    if status == "success":
+        return jsonify({'message': 'Item is now reserved'}), 200
+    if status == "conflict":
+        return jsonify({'message': 'Item has already been reserved'}), 403
     else:
         return jsonify({'message': 'Item not found'}), 404
