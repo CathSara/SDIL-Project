@@ -8,8 +8,8 @@ def seed_database():
     user_2, _ = create_user("013444485", "Elma", "Koksnase", "nananana")
     user_3, _ = create_user("023454334", "Stinktier", "Ja", "Nein")
 
-    confirm_user(user_1, "1234")
-    confirm_user(user_2, "1234")
+    confirm_user(user_1.id, "1234")
+    confirm_user(user_2.id, "1234")
     # Not confirming user_3
 
     box_1 = create_box("University Box", "Albertus-Magnus-Platz 1")

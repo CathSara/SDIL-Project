@@ -59,7 +59,18 @@ class Item(db.Model):
     taken_by = db.relationship('User', foreign_keys=[taken_by_id], backref='items_taken')
     taken_at = db.Column(db.DateTime, nullable=True)
 
-    def to_dict(self):
+    def to_overview_dict(self):
+        return {
+            "id": self.id,
+            "image_path": self.image_path,
+            "category": self.category,
+            "title": self.title,
+            "description": self.description,
+            "condition": self.condition,
+            "box_id": self.box_id,
+        }
+    
+    def to_detail_dict(self):
         return {
             "id": self.id,
             "image_path": self.image_path,
@@ -69,8 +80,13 @@ class Item(db.Model):
             "condition": self.condition,
             "weight": self.weight,
             "box_id": self.box_id,
+            "number_of_views": self.number_of_views,
             "created_by_id": self.created_by_id,
-            "taken_by_id": self.taken_by_id
+            "created_at": self.created_at,
+            "reserved_by_id": self.reserved_by_id,
+            "reserved_until": self.reserved_until,
+            "taken_by_id": self.taken_by_id,
+            "taken_at": self.taken_at
         }
 
 

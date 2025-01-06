@@ -1,3 +1,4 @@
+from sqlalchemy import or_
 from backend import db
 from backend.models.models import User, Item, Box
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -122,15 +123,43 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     return None
 
 
-def get_all_items(box_id=None):
+def get_item_by_id(item_id):
     """
-    Retrieve all items. Optionally filtered by a specific box.
+    Returns a single item by id, and increases the number_of_views counter of the item.
     """
     query = Item.query
+
+    item = Item.query.get(item_id)
+
+    if item:
+        item.number_of_views += 1
+        db.session.commit()
+    return item
+
+
+def get_items(box_id=None, category=None, search_string=None):
+    """
+    Retrieves all items, optionally filtered by box, category, or search_string.
+    """
+    query = Item.query
+    
     if box_id:
         query = query.filter_by(box_id=box_id)
+    
+    if category:
+        query = query.filter_by(category=category)
+    
+    if search_string:
+        query = query.filter(
+            or_(
+                Item.title.like(f"%{search_string}%"),
+                Item.description.like(f"%{search_string}%")
+            )
+        )
+
     items = query.all()
     return items
+
 
 
 ##### FAVORITING #####
