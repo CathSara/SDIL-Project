@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..models.database_service import get_items, get_item_by_id
+from ..models.database_service import get_items, get_item_by_id, update_item_as_reserved
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -39,5 +39,17 @@ def get_item():
     
     if item:
         return jsonify(item.to_detail_dict()), 200
+    else:
+        return jsonify({'message': 'Item not found'}), 404
+    
+
+@inventory_bp.route('/reserve', methods=['POST'])
+def reserve_item():
+    item_id = request.args.get("item_id", None)
+    user_id = request.args.get("user_id", None)
+    reserved_item = update_item_as_reserved(item_id, user_id)
+
+    if reserved_item:
+        return jsonify(reserved_item.to_detail_dict()), 200
     else:
         return jsonify({'message': 'Item not found'}), 404
