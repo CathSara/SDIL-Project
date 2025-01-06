@@ -1,7 +1,9 @@
 from backend import db
 from backend.models.models import User, Item, Box
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta, timezone
 
+##### BOX #####
 
 def create_box(name, location):
     """
@@ -13,6 +15,15 @@ def create_box(name, location):
     return box
 
 
+def get_all_boxes():
+    """
+    List all boxes.
+    """
+    return Box.query.all()
+
+
+##### USER #####
+
 def create_user(phone_number, first_name, last_name, password_raw):
     """
     Create a new user (first checks whether phone number has already been used).
@@ -22,17 +33,49 @@ def create_user(phone_number, first_name, last_name, password_raw):
         return False
     
     password = generate_password_hash(password_raw)
+    current_time = datetime.now(timezone.utc)
 
-    user = User(phone_number=phone_number, first_name=first_name, last_name=last_name, password=password)
+    user = User(phone_number=phone_number, first_name=first_name, last_name=last_name, password=password, created_at=current_time, is_confirmed=False)
     db.session.add(user)
     db.session.commit()
     return user, True
 
 
+def confirm_user(user, token):
+    """
+    Confirms user through phone number (token is always "1234").
+    """
+    user = User.query.filter_by(id=user.id).first()
+    if user and token == "1234":
+        user.is_confirmed = True
+    return user, user.is_confirmed
+
+
+def authenticate_user(phone_number, password):
+    """
+    Authenticates user if account exists, the password matches, and the account is confirmed via phone numnber.
+    """
+    user = User.query.filter_by(phone_number=phone_number).first()
+    if user and check_password_hash(user.password, password) and user.is_confirmed:
+        return user, True
+    else:
+        return user, False
+    
+
+def get_all_users():
+    """
+    List all users.
+    """
+    return User.query.all()
+
+
+##### ITEM #####
+
 def create_item(image_path, category, title, description, condition, weight, box, created_by):
     """
     Add a new item to a box.
     """
+    current_time = datetime.now(timezone.utc)
     item = Item(
         image_path=image_path,
         category=category,
@@ -41,19 +84,12 @@ def create_item(image_path, category, title, description, condition, weight, box
         condition=condition,
         weight=weight,
         box=box,
-        created_by=created_by
+        created_by=created_by,
+        created_at=current_time
     )
     db.session.add(item)
     db.session.commit()
     return item
-
-
-def authenticate_user(phone_number, password):
-    user = User.query.filter_by(phone_number=phone_number).first()
-    if user and check_password_hash(user.password, password):
-        return True
-    else:
-        return False
 
 
 def update_item_as_taken(item_id, taken_by_user_id):
@@ -62,8 +98,25 @@ def update_item_as_taken(item_id, taken_by_user_id):
     """
     item = Item.query.get(item_id)
     if item:
-        item.is_taken = True
-        item.taken_by_user_id = taken_by_user_id
+        current_time = datetime.now(timezone.utc)
+        item.taken_by_id = taken_by_user_id
+        item.taken_at = current_time
+        db.session.commit()
+        return item
+    return None
+
+
+def update_item_as_reserved(item_id, reserved_by_user_id):
+    """
+    Marks a specified item as reserved.
+    """
+    item = Item.query.get(item_id)
+    if item:
+        current_time = datetime.now(timezone.utc)
+        new_time = current_time + timedelta(minutes=20)
+        item.reserved_by_id = reserved_by_user_id
+        item.reserved_at = current_time
+        item.reserved_until = new_time
         db.session.commit()
         return item
     return None
@@ -80,19 +133,29 @@ def get_all_items(box_id=None):
     return items
 
 
-def get_all_users():
-    """
-    List all users.
-    """
-    return User.query.all()
+##### FAVORITING #####
+
+#def favorite_item(user_id, item_id):
+#    if user_id and item_id:
+#        user = User.query.get(user_id)
+#        item = Item.query.get(item_id)
+#        user.favorited_items.append(item)
+#        db.session.commit()
+##        return True
+    return False
 
 
-def get_all_boxes():
-    """
-    List all boxes.
-    """
-    return Box.query.all()
+#def unfavorite_item(user_id, item_id):
+#    if user_id and item_id:
+#        user = User.query.get(user_id)
+#        item = Item.query.get(item_id)
+#        user.favorited_items.remove(item)
+#        db.session.commit()
+#        return True
+#    return False
 
+
+##### GENERAL ###
 
 def delete_all_rows():
     """

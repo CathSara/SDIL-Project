@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from .. import db
 
 class Box(db.Model):
@@ -5,8 +6,7 @@ class Box(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     location = db.Column(db.String(255), nullable=False)
-    # Relationship with items
-    items = db.relationship('Item', backref='box', lazy=True)
+    items = db.relationship('Item', backref='box', lazy=True)  # Relationship with items
 
     def to_dict(self):
         return {
@@ -25,18 +25,39 @@ class Item(db.Model):
     description = db.Column(db.Text, nullable=True)
     condition = db.Column(db.String(50), nullable=False)
     weight = db.Column(db.Float, nullable=False)
-    is_taken = db.Column(db.Boolean, default=False, nullable=False)
 
-    # Foreign key: The box where the item is stored
-    box_id = db.Column(db.Integer, db.ForeignKey('boxes.id'), nullable=False)
+    number_of_views = db.Column(db.Integer, default=0)
 
-    # Foreign key: The user who put the item in
-    created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    box_id = db.Column(
+        db.Integer,
+        db.ForeignKey('boxes.id', name='fk_items_box_id'),  # Added constraint name
+        nullable=False
+    )  # Foreign key: The box where the item is stored
+
+    created_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', name='fk_items_created_by_id'),  # Added constraint name
+        nullable=False
+    )  # Foreign key: The user who put the item in
     created_by = db.relationship('User', foreign_keys=[created_by_id], backref='items_created')
+    created_at = db.Column(db.DateTime, nullable=True, default=func.now())    
+    
+    reserved_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', name='fk_items_reserved_by_id'),  # Added constraint name
+        nullable=True
+    )  # Foreign key: The user reserved the item (optional)
+    reserved_by = db.relationship('User', foreign_keys=[reserved_by_id], backref='items_reserved')
+    reserved_at = db.Column(db.DateTime, nullable=True)
+    reserved_until = db.Column(db.DateTime, nullable=True)
 
-    # Foreign key: The user who took the item (optional)
-    taken_by_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    taken_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', name='fk_items_taken_by_id'),  # Added constraint name
+        nullable=True
+    )  # Foreign key: The user who took the item (optional)
     taken_by = db.relationship('User', foreign_keys=[taken_by_id], backref='items_taken')
+    taken_at = db.Column(db.DateTime, nullable=True)
 
     def to_dict(self):
         return {
@@ -46,8 +67,7 @@ class Item(db.Model):
             "title": self.title,
             "description": self.description,
             "condition": self.condition,
-            "weiht": self.weight,
-            "is_taken": self.is_taken,
+            "weight": self.weight,
             "box_id": self.box_id,
             "created_by_id": self.created_by_id,
             "taken_by_id": self.taken_by_id
@@ -61,6 +81,8 @@ class User(db.Model):
     first_name = db.Column(db.String(15), nullable=False)
     last_name = db.Column(db.String(15), nullable=False)
     password = db.Column(db.String(120))
+    created_at = db.Column(db.DateTime, default=func.now())
+    is_confirmed = db.Column(db.Boolean, default=False)
 
     def to_dict(self):
         return {
@@ -69,4 +91,5 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "password": self.password,
+            "is_confirmed": self.is_confirmed
         }
