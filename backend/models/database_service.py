@@ -113,6 +113,7 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     Marks a specified item as reserved.
     """
     item = Item.query.get(item_id)
+    check_and_update_reservation(item)
     user = User.query.get(reserved_by_user_id)
     if not item:
         return "item_error"
@@ -133,10 +134,10 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
 
 def update_item_as_unreserved(item_id, reserved_by_user_id):
     item = Item.query.get(item_id)
+    check_and_update_reservation(item)
     if not item:
         return "item_error"
-    print("ids", type(item.reserved_by_id), type(reserved_by_user_id))
-    if item.reserved_by_id == reserved_by_user_id:
+    if item.reserved_by_id == int(reserved_by_user_id):
         print("enter")
         item.reserved_by_id = None
         item.reserved_at = None
