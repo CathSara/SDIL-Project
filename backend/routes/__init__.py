@@ -31,3 +31,8 @@ def get_boxes_list():
     boxes = get_all_boxes()
     boxes_data = [box.to_dict() for box in boxes]
     return jsonify(boxes_data)
+
+
+@main.route('/test/hi', methods=['GET'])
+def say_hi():
+    return jsonify({'message': 'It works'}), 200
