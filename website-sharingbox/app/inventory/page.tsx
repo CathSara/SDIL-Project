@@ -11,12 +11,13 @@ interface Item {
   description: string;
   category: string;
   condition: string;
-  is_taken: boolean;
+  box_id: number;
 }
 
 interface Box {
   id: number;
   name: string;
+  location: string;
 }
 
 interface Category {
@@ -173,35 +174,37 @@ export default function Page() {
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.length > 0 ? (
-          items.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white shadow-2xl rounded-lg p-6 transform transition duration-500 hover:scale-105"
-            >
-              <Image
-                src={item.image_path}
-                alt={item.title}
-                className="w-full h-40 object-cover rounded-md mb-4"
-                width="300"
-                height="300"
-              />
-              <h2 className="text-gray-800 font-bold text-2xl mb-2">{item.title}</h2>
-              <p className="text-gray-600 text-lg">{item.description}</p>
-              <p className="text-gray-500 text-sm mt-2">
-                <strong>Category:</strong> {item.category}
-              </p>
-              <p className="text-gray-500 text-sm">
-                <strong>Condition:</strong> {item.condition}
-              </p>
-              <p className={`text-sm mt-4 ${item.is_taken ? 'text-red-500' : 'text-green-500'}`}>
-                {item.is_taken ? 'Taken' : 'Available'}
-              </p>
-            </div>
-          ))
+          items.map((item) => {
+            const box = boxes.find((box) => box.id === item.box_id);
+
+            return (
+              <div
+                key={item.id}
+                className="bg-white shadow-lg rounded-lg p-6 transform transition duration-500 hover:scale-105"
+              >
+                <div className="w-full h-64 bg-gray-100 rounded-md mb-4 relative overflow-hidden">
+                  <Image
+                    src={item.image_path}
+                    alt={item.title}
+                    className="object-cover w-full h-full"
+                    width="300"
+                    height="300"
+                  />
+                </div>
+                <h2 className="text-gray-800 font-semibold text-xl mb-2">{item.title}</h2>
+                {box && (
+                  <p className="text-gray-600 text-md">
+                    <strong>Located in:</strong> {box.name}
+                  </p>
+                )}
+              </div>
+            );
+          })
         ) : (
           <p className="text-white text-center text-xl">No items found.</p>
         )}
       </main>
+
     </div>
   );
 }

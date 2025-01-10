@@ -146,9 +146,12 @@ def get_boxes():
 @inventory_bp.route('/categories', methods=['GET'])
 def get_categories():
     categories_data = [
-        { "name": "dishes"},
-        { "name": "household appliance"},
-        { "name": "decorations"}
+        { "name": "Dishes"},
+        { "name": "Household Appliance"},
+        { "name": "Decorations"},
+        { "name": "Electronics"},
+        { "name": "Storage"},
+        { "name": "Toys"}
     ]
 
     return jsonify(categories_data), 200
