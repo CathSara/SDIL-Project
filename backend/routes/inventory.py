@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..models.database_service import add_favorite, get_all_boxes, get_items, get_item_by_id, get_user_favorites, is_item_favorited, remove_favorite, update_item_as_reserved, update_item_as_unreserved
+from ..models.database_service import add_favorite, get_all_boxes, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, remove_favorite, update_item_as_reserved, update_item_as_unreserved
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -71,6 +71,19 @@ def unreserve_item():
         return jsonify({'message': 'Item not found'}), 404
     else:
         return jsonify({'message': 'Item could not be unreserved'}), 403
+    
+
+@inventory_bp.route('/get_reserved', methods=['GET'])
+def get_reserved():
+    user_id = request.args.get("user_id", None)
+
+    items = get_reserved_items(user_id)
+    
+    if items:
+        items_data = [item.to_overview_dict() for item in items]
+        return jsonify(items_data), 200
+    else:
+        return jsonify({'message': 'No items found matching the criteria'}), 404
 
 
 @inventory_bp.route('/favorize', methods=['POST'])
@@ -113,7 +126,7 @@ def get_favorites():
     favorites = get_user_favorites(user_id)
 
     if favorites:
-        favorites_data = [favorite.to_dict() for favorite in favorites]
+        favorites_data = [favorite.to_overview_dict() for favorite in favorites]
         return jsonify(favorites_data), 200
     else:
         return jsonify({'message': 'No favorites found'}), 404

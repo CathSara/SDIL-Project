@@ -24,8 +24,6 @@ interface Category {
   name: string;
 }
 
-//const categories = ['Electronics', 'Books', 'Clothing', 'Furniture', 'Other']; // Example categories
-
 export default function Page() {
   const [items, setItems] = useState<Item[]>([]);
   const [boxes, setBoxes] = useState<Box[]>([]);
@@ -33,6 +31,7 @@ export default function Page() {
   const [searchString, setSearchString] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedBox, setSelectedBox] = useState('');
+  const [userId, setUserId] = useState<string>('');
 
   useEffect(() => {
     // Fetch initial items
@@ -44,13 +43,14 @@ export default function Page() {
       .then((data: Box[]) => setBoxes(data))
       .catch((error) => console.error('Error fetching boxes:', error));
 
-      // Fetch categories
+    // Fetch categories
     fetch('http://127.0.0.1:5000/inventory/categories')
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
       .catch((error) => console.error('Error fetching categories:', error));
-  }, []);
 
+    setUserId('1');
+  }, []);
 
   const fetchItems = () => {
     const params = new URLSearchParams();
@@ -62,6 +62,22 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
       .catch((error) => console.error('Error fetching items:', error));
+  };
+
+  const fetchReservedItems = () => {
+    if (!userId) return;
+    fetch(`http://127.0.0.1:5000/inventory/get_reserved?user_id=${userId}`)
+      .then((response) => response.json())
+      .then((data: Item[]) => setItems(data))
+      .catch((error) => console.error('Error fetching reserved items:', error));
+  };
+
+  const fetchLikedItems = () => {
+    if (!userId) return;
+    fetch(`http://127.0.0.1:5000/inventory/get_favorites?user_id=${userId}`)
+      .then((response) => response.json())
+      .then((data: Item[]) => setItems(data))
+      .catch((error) => console.error('Error fetching liked items:', error));
   };
 
   const handleSearch = () => {
@@ -79,7 +95,7 @@ export default function Page() {
       <Navigation />
       {/* Search Bar */}
       <div className="w-full bg-white py-4 px-8 shadow-md flex justify-center">
-        <div className="sm:space-x-4">
+        <div className="sm:space-x-4 flex flex-col justify-center sm:flex-row sm:items-center w-full max-w-screen-lg">
           {/* Search Input */}
           <input
             type="text"
@@ -88,11 +104,12 @@ export default function Page() {
             onChange={(e) => setSearchString(e.target.value)}
             className="w-full sm:w-auto px-4 py-2 border rounded-md mb-4 sm:mb-0"
           />
+          
           {/* Category Dropdown */}
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2 border rounded-md mb-4 sm:mb-0"
+            className="w-full sm:w-auto px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -101,11 +118,12 @@ export default function Page() {
               </option>
             ))}
           </select>
+          
           {/* Box Dropdown */}
           <select
             value={selectedBox}
             onChange={(e) => setSelectedBox(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2 border rounded-md mb-4 sm:mb-0"
+            className="w-full sm:w-auto px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
           >
             <option value="">All Boxes</option>
             {boxes.map((box) => (
@@ -114,13 +132,41 @@ export default function Page() {
               </option>
             ))}
           </select>
+          
           {/* Search Button */}
           <button
             onClick={handleSearch}
-            className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700"
+            className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 mb-4 sm:mb-0"
           >
             Search
           </button>
+          
+          {/* Reserved and Liked Items Buttons */}
+          <div className="flex flex-row justify-center">
+            <button
+              onClick={fetchReservedItems}
+              className="flex flex-col items-center text-black text-sm rounded-md hover:bg-gray-100 mb-0 ml-0 sm:ml-16 mr-8 p-1"
+            >
+              <div className="mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                </svg>
+              </div>
+              <span>Reserved</span>
+            </button>
+            
+            <button
+              onClick={fetchLikedItems}
+              className="flex flex-col items-center text-black text-sm rounded-md hover:bg-gray-100 mr-4 p-1"
+            >
+              <div className="mb-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg>
+              </div>
+              <span>Liked</span>
+            </button>
+          </div>
         </div>
       </div>
 

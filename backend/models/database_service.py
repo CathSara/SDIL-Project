@@ -206,6 +206,14 @@ def get_items(box_id=None, category=None, search_string=None):
     return items
 
 
+def get_reserved_items(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return None
+    
+    return Item.query.filter(Item.reserved_by_id == user_id).all()
+
+
 ##### FAVORITE #####
 
 def add_favorite(user_id, item_id):
@@ -231,7 +239,11 @@ def is_item_favorited(user_id, item_id):
 
 
 def get_user_favorites(user_id):
-    return Favorite.query.filter_by(user_id=user_id).all()
+    user = User.query.get(user_id)
+    if not user:
+        return None
+    
+    return db.session.query(Item).join(Favorite).filter(Favorite.user_id == user_id).all()
 
 
 ##### GENERAL #####
