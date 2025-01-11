@@ -219,6 +219,14 @@ def get_reserved_items(user_id):
     return Item.query.filter(Item.reserved_by_id == user_id).all()
 
 
+def is_item_reserved(item_id):
+    item = Item.query.get(item_id)
+    if item.reserved_by_id:
+        return True
+    else:
+        return False
+
+
 ##### FAVORITE #####
 
 def add_favorite(user_id, item_id):

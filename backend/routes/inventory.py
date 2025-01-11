@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..models.database_service import add_favorite, get_all_boxes, get_box_by_id, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, remove_favorite, update_item_as_reserved, update_item_as_unreserved
+from ..models.database_service import add_favorite, get_all_boxes, get_box_by_id, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, is_item_reserved, remove_favorite, update_item_as_reserved, update_item_as_unreserved
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -84,6 +84,14 @@ def get_reserved():
         return jsonify(items_data), 200
     else:
         return jsonify({'message': 'No items found matching the criteria'}), 404
+    
+
+@inventory_bp.route('/is_reserved', methods=['GET'])
+def is_reserved():
+    item_id = request.args.get("item_id", None)
+
+    result = is_item_reserved(item_id)
+    return jsonify({'reserved': result, 'item_id': item_id}), 200
 
 
 @inventory_bp.route('/favorize', methods=['POST'])
