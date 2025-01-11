@@ -47,18 +47,18 @@ const LoginPage: React.FC = () => {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-r bg-mint-green flex flex-col items-center justify-center">
             {/* Header Section */}
-            <header className="w-full bg-blue-600 text-white shadow-lg">
+            <header className="w-full bg-mint-green text-dark-green shadow-lg">
                 <div className="container mx-auto px-10 py-16">
-                    <h1 className="text-5xl font-extrabold text-center">Sharing Box Köln!</h1>
+                    <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
                 </div>
             </header>
 
             {/* Main Content */}
             <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-12">
                 <div className="bg-white shadow-2xl rounded-lg p-12 transform transition duration-500 hover:scale-105 text-center w-full max-w-sm">
-                    <h2 className="text-gray-800 font-bold text-3xl mb-6">Login</h2>
+                    <h2 className="text-dark- font-bold text-3xl mb-6">Login</h2>
                     {errorMessage && (
                         <p className="text-red-500 mb-4 text-lg">{errorMessage}</p>
                     )}
@@ -72,7 +72,8 @@ const LoginPage: React.FC = () => {
                                 id="phone_number"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
-                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green
+                                "
                                 placeholder="Enter your phone number"
                                 required
                             />
@@ -86,7 +87,7 @@ const LoginPage: React.FC = () => {
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                 placeholder="Enter your password"
                                 required
                             />

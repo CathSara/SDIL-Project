@@ -97,16 +97,16 @@ export default function Page() {
 }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center">
+    <div className="min-h-screen bg-mint-green flex flex-col items-center">
       {/* Header Section */}
-      <header className="w-full bg-blue-600 text-white shadow-lg">
+      <header className="w-full bg-mint-green text-dark-green">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-5xl font-extrabold text-center">Sharing Box Köln!</h1>
+          <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
         </div>
       </header>
       <Navigation />
       {/* Search Bar */}
-      <div className="w-full bg-white py-4 px-8 shadow-md flex justify-center">
+      <div className="w-full bg-mint-green white py-4 px-8 shadow-md flex justify-center">
         <div className="sm:space-x-4 flex flex-col justify-center sm:flex-row sm:items-center w-full max-w-screen-lg">
           {/* Search Input */}
           <input
@@ -116,12 +116,12 @@ export default function Page() {
             onChange={(e) => setSearchString(e.target.value)}
             className="w-full sm:w-auto px-4 py-2 border rounded-md mb-4 sm:mb-0"
           />
-          
+
           {/* Category Dropdown */}
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
+            className="w-full sm:w-auto bg-white px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -130,12 +130,12 @@ export default function Page() {
               </option>
             ))}
           </select>
-          
+
           {/* Box Dropdown */}
           <select
             value={selectedBox}
             onChange={(e) => setSelectedBox(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
+            className="w-full sm:w-auto  bg-white px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
           >
             <option value="">All Boxes</option>
             {boxes.map((box) => (
@@ -144,15 +144,15 @@ export default function Page() {
               </option>
             ))}
           </select>
-          
+
           {/* Search Button */}
           <button
             onClick={handleSearch}
-            className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 mb-4 sm:mb-0"
+            className="w-full sm:w-auto px-6 py-2 bg-dark-green text-white font-bold rounded-md hover:bg-lighter-green mb-4 sm:mb-0"
           >
             Search
           </button>
-          
+
           {/* Reserved and Liked Items Buttons */}
           <div className="flex flex-row justify-center">
             <button
@@ -166,7 +166,7 @@ export default function Page() {
               </div>
               <span>Reserved</span>
             </button>
-            
+
             <button
               onClick={fetchLikedItems}
               className="flex flex-col items-center text-black text-sm rounded-md hover:bg-gray-100 mr-4 p-1"
