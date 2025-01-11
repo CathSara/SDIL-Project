@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..models.database_service import add_favorite, get_all_boxes, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, remove_favorite, update_item_as_reserved, update_item_as_unreserved
+from ..models.database_service import add_favorite, get_all_boxes, get_box_by_id, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, remove_favorite, update_item_as_reserved, update_item_as_unreserved
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -140,7 +140,18 @@ def get_boxes():
         boxes_data = [box.to_dict() for box in boxes]
         return jsonify(boxes_data), 200
     else:
-        return jsonify({'message': 'No favorites found'}), 404
+        return jsonify({'message': 'No boxes found'}), 404
+    
+
+@inventory_bp.route('/box', methods=['GET'])
+def get_box():
+    box_id = request.args.get("box_id", None)
+    box = get_box_by_id(box_id=box_id)
+
+    if box:
+        return jsonify(box.to_dict()), 200
+    else:
+        return jsonify({'message': 'No box found'}), 404
 
 
 @inventory_bp.route('/categories', methods=['GET'])

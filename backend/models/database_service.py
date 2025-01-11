@@ -23,6 +23,13 @@ def get_all_boxes():
     return Box.query.all()
 
 
+def get_box_by_id(box_id):
+    """
+    View box detail.
+    """
+    return Box.query.get(box_id)
+
+
 ##### USER #####
 
 def create_user(phone_number, first_name, last_name, password_raw):
@@ -167,8 +174,6 @@ def get_item_by_id(item_id):
     """
     Returns a single item by id, and increases the number_of_views counter of the item.
     """
-    query = Item.query
-
     item = Item.query.get(item_id)
 
     if item:

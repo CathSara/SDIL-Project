@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Navigation from '../components/Navigation';
+import Link from 'next/link';
 
 interface Item {
   id: number;
@@ -49,6 +50,7 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
       .catch((error) => console.error('Error fetching categories:', error));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchItems = () => {
@@ -187,26 +189,25 @@ export default function Page() {
             const box = boxes.find((box) => box.id === item.box_id);
 
             return (
-              <div
-                key={item.id}
-                className="bg-white shadow-lg rounded-lg p-6 transform transition duration-500 hover:scale-105"
-              >
-                <div className="w-full h-64 bg-gray-100 rounded-md mb-4 relative overflow-hidden">
-                  <Image
-                    src={item.image_path}
-                    alt={item.title}
-                    className="object-cover w-full h-full"
-                    width="300"
-                    height="300"
-                  />
+              <Link key={item.id} href={`/inventory/${item.id}`}>
+                <div className="bg-white shadow-lg rounded-lg p-6 transform transition duration-500 hover:scale-105 cursor-pointer">
+                  <div className="w-full h-64 bg-gray-100 rounded-md mb-4 relative overflow-hidden">
+                    <Image
+                      src={item.image_path}
+                      alt={item.title}
+                      className="object-cover w-full h-full"
+                      width="300"
+                      height="300"
+                    />
+                  </div>
+                  <h2 className="text-gray-800 font-semibold text-xl mb-2">{item.title}</h2>
+                  {box && (
+                    <p className="text-gray-600 text-md">
+                      <strong>Located in:</strong> {box.name}
+                    </p>
+                  )}
                 </div>
-                <h2 className="text-gray-800 font-semibold text-xl mb-2">{item.title}</h2>
-                {box && (
-                  <p className="text-gray-600 text-md">
-                    <strong>Located in:</strong> {box.name}
-                  </p>
-                )}
-              </div>
+              </Link>
             );
           })
         ) : (
