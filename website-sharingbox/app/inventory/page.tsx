@@ -32,7 +32,7 @@ export default function Page() {
   const [searchString, setSearchString] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedBox, setSelectedBox] = useState('');
-  const [userId, setUserId] = useState<string>('');
+  const userId = getCookie('user_id')
 
   useEffect(() => {
     // Fetch initial items
@@ -49,8 +49,6 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
       .catch((error) => console.error('Error fetching categories:', error));
-
-    setUserId('1');
   }, []);
 
   const fetchItems = () => {
@@ -84,6 +82,17 @@ export default function Page() {
   const handleSearch = () => {
     fetchItems();
   };
+
+  function getCookie(name: string) {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const [key, value] = cookie.split('=');
+        if (key === name) {
+            return value;
+        }
+    }
+    return null;
+}
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center">

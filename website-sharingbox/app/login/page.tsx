@@ -26,8 +26,14 @@ const LoginPage: React.FC = () => {
 
             if (response.ok) {
                 const data = await response.json();
+
+                // Store the token in localStorage (if needed for API requests)
                 localStorage.setItem('token', data.token);
 
+                // Store the user ID as a session cookie
+                document.cookie = `user_id=${data.user_id}; path=/;`;
+
+                // Redirect to inventory page
                 router.push('/inventory');
             } else {
                 const errorData = await response.json();
@@ -38,6 +44,7 @@ const LoginPage: React.FC = () => {
             setErrorMessage('An error occurred. Please try again.');
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center justify-center">
