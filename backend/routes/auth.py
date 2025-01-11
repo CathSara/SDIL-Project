@@ -41,7 +41,9 @@ def login():
     phone_number = data['phone_number']
     password = data['password']
 
-    if authenticate_user(phone_number=phone_number, password=password):
-        return jsonify({'message': 'Login successful!', 'token': 'mock_token'}), 200
+    user, authenticated = authenticate_user(phone_number=phone_number, password=password)
+
+    if authenticated:
+        return jsonify({'message': 'Login successful!', 'token': 'mock_token', 'user_id': user.id}), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
