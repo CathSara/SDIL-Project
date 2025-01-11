@@ -98,11 +98,11 @@ const RegistrationPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center justify-center">
+        <div className="min-h-screen bg-mint-green flex flex-col items-center justify-center">
             {/* Header Section */}
-            <header className="w-full bg-blue-600 text-white shadow-lg">
+            <header className="w-full bg-mint-green text-dark-green shadow-lg">
                 <div className="container mx-auto px-10 py-16">
-                    <h1 className="text-5xl font-extrabold text-center">Sharing Box Köln!</h1>
+                    <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
                 </div>
             </header>
 
@@ -121,7 +121,7 @@ const RegistrationPage: React.FC = () => {
                                         type="text"
                                         id="token"
                                         name="token"
-                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                         placeholder="Enter the code"
                                         value={token}
                                         onChange={(e) => setToken(e.target.value)}
@@ -131,7 +131,7 @@ const RegistrationPage: React.FC = () => {
                                 {error && <p className="text-red-500 text-lg mb-4">{error}</p>}
                                 <button
                                     type="submit"
-                                    className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg text-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green"
                                 >
                                     Confirm
                                 </button>
@@ -149,7 +149,7 @@ const RegistrationPage: React.FC = () => {
                                         type="text"
                                         id="firstname"
                                         name="firstname"
-                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                         placeholder="Enter your firstname"
                                         value={firstName}
                                         onChange={(e) => setFirstName(e.target.value)}
@@ -165,7 +165,7 @@ const RegistrationPage: React.FC = () => {
                                         type="text"
                                         id="lastname"
                                         name="lastname"
-                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                         placeholder="Enter your lastname"
                                         value={lastName}
                                         onChange={(e) => setLastName(e.target.value)}
@@ -181,7 +181,7 @@ const RegistrationPage: React.FC = () => {
                                         type="tel"
                                         id="phone_number"
                                         name="phone_number"
-                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                         placeholder="Enter your phone number"
                                         value={phoneNumber}
                                         onChange={(e) => setPhoneNumber(e.target.value)}
@@ -197,7 +197,7 @@ const RegistrationPage: React.FC = () => {
                                         type="password"
                                         id="password"
                                         name="password"
-                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                         placeholder="Enter your password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -213,7 +213,7 @@ const RegistrationPage: React.FC = () => {
                                         type="password"
                                         id="repeatPassword"
                                         name="repeatPassword"
-                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                         placeholder="Repeat your password"
                                         value={repeatPassword}
                                         onChange={(e) => setRepeatPassword(e.target.value)}
@@ -225,7 +225,7 @@ const RegistrationPage: React.FC = () => {
 
                                 <button
                                     type="submit"
-                                    className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg text-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green"
                                 >
                                     Register
                                 </button>

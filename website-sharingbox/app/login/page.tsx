@@ -94,7 +94,7 @@ const LoginPage: React.FC = () => {
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg text-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-blue-400"
                         >
                             Sign In
                         </button>
