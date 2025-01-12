@@ -50,7 +50,7 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
       .catch((error) => console.error('Error fetching categories:', error));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchItems = () => {
@@ -88,19 +88,19 @@ export default function Page() {
   function getCookie(name: string) {
     const cookies = document.cookie.split('; ');
     for (const cookie of cookies) {
-        const [key, value] = cookie.split('=');
-        if (key === name) {
-            return value;
-        }
+      const [key, value] = cookie.split('=');
+      if (key === name) {
+        return value;
+      }
     }
     return null;
-}
+  }
 
   return (
     <div className="min-h-screen bg-mint-green flex flex-col items-center">
       {/* Header Section */}
       <header className="w-full bg-mint-green text-dark-green">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-10 py-16">
           <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
         </div>
       </header>

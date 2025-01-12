@@ -114,16 +114,21 @@ export default function ItemDetailPage({ params }: { params: Promise<{ itemId: s
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center">
-      <header className="w-full bg-blue-600 text-white shadow-lg">
-        <div className="container mx-auto px-4 py-4">
-          <h1 className="text-5xl font-extrabold text-center">{itemDetail.title}</h1>
+    <div className="min-h-screen bg-mint-green flex flex-col items-center">
+      <header className="w-full bg-mint-green text-dark-green shadow-lg">
+        <div className="container mx-auto px-10 py-16">
+          <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
         </div>
       </header>
 
-      <main className="flex-grow container mx-auto px-8 py-12">
+      <main className="flex-grow container mx-auto px-6 py-10">
         <div className="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto">
-          <div className="w-full h-64 bg-gray-100 rounded-md mb-4 relative overflow-hidden">
+          <div className="container bg-mint-green rounded-md px-4 py-4">
+            <h1 className="text-dark-green font-extrabold text-center text-4xl mb-2">{itemDetail.title}</h1>
+          </div>
+          {/* White space container between title and image */}
+          <div className="bg-white h-6"></div>  {/* Adds white space */}
+          <div className="w-full h-full bg-gray-100 rounded-md mb-4 relative overflow-hidden">
             <Image
               src={itemDetail.image_path}
               alt={itemDetail.title}
@@ -132,45 +137,47 @@ export default function ItemDetailPage({ params }: { params: Promise<{ itemId: s
               height="300"
             />
           </div>
-          <h2 className="text-gray-800 font-semibold text-xl mb-2">{itemDetail.title}</h2>
-          <p className="text-gray-600 text-md mb-4">
+          <div className="bg-white h-6"></div>  {/* Adds white space */}
+          <p className="text-gray-600 text-xl mb-4">
             <strong>Category:</strong> {itemDetail.category}
           </p>
-          <p className="text-gray-600 text-md mb-4">
+          <p className="text-gray-600 text-xl mb-4">
             <strong>Condition:</strong> {itemDetail.condition}
           </p>
-          <p className="text-gray-600 text-md mb-4">
+          <p className="text-gray-600 text-xl mb-4">
             <strong>Weight:</strong> {itemDetail.weight}
           </p>
-          <p className="text-gray-600 text-md mb-4">
+          <p className="text-gray-600 text-xl mb-4">
             <strong>Located in:</strong> {box}
           </p>
-          <p className="text-gray-600 text-md mb-4">
+          <p className="text-gray-600 text-xl mb-4">
             <strong>Description:</strong> {itemDetail.description}
           </p>
-          <p className="text-gray-600 text-md mb-4">
+          <p className="text-gray-600 text-xl mb-4">
             <strong>Views:</strong> {itemDetail.number_of_views}
           </p>
 
+
           {/* Like/Unlike and Reserve/Unreserve buttons */}
-          <div className="flex space-x-4 mb-4">
+          <div className="flex space-x-4  justify-end mb-4">
             <button
               onClick={isFavorited ? handleUnlike : handleLike}
-              className={`px-6 py-2 font-bold rounded-md ${isFavorited ? 'bg-red-600' : 'bg-blue-600'} text-white`}
+              className={`px-6 py-2 font-bold rounded-md ${isFavorited ? 'bg-mint-green text-dark-green' : 'bg-dark-green text-white'}`}
             >
               {isFavorited ? 'Unlike' : 'Like'}
             </button>
             <button
               onClick={isReserved ? handleUnreserve : handleReserve}
-              className={`px-6 py-2 font-bold rounded-md ${isReserved ? 'bg-red-600' : 'bg-green-600'} text-white`}
+              className={`px-6 py-2 font-bold rounded-md flex items-center ${isReserved ? 'bg-mint-green text-dark-blue' : 'bg-dark-blue text-white'}`}
             >
+
               {isReserved ? 'Unreserve' : 'Reserve'}
             </button>
           </div>
 
           <button
             onClick={() => router.back()}
-            className="px-6 py-2 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700"
+            className="px-6 py-2 bg-dark-green text-white font-bold rounded-md hover:bg-dark-green-hover"
           >
             Back
           </button>
