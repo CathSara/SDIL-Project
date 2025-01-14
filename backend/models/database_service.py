@@ -6,11 +6,11 @@ from datetime import datetime, timedelta, timezone
 
 ##### BOX #####
 
-def create_box(name, location):
+def create_box(name, location, box_picture_path, maps_link):
     """
     Create a new box.
     """
-    box = Box(name=name, location=location)
+    box = Box(name=name, location=location, box_picture_path=box_picture_path, maps_link=maps_link)
     db.session.add(box)
     db.session.commit()
     return box
@@ -32,7 +32,7 @@ def get_box_by_id(box_id):
 
 ##### USER #####
 
-def create_user(phone_number, first_name, last_name, password_raw):
+def create_user(phone_number, first_name, last_name, password_raw, profile_picture_path):
     """
     Create a new user (first checks whether phone number has already been used).
     """
@@ -43,7 +43,7 @@ def create_user(phone_number, first_name, last_name, password_raw):
     password = generate_password_hash(password_raw)
     current_time = datetime.now(timezone.utc)
 
-    user = User(phone_number=phone_number, first_name=first_name, last_name=last_name, password=password, created_at=current_time, is_confirmed=False)
+    user = User(phone_number=phone_number, first_name=first_name, last_name=last_name, password=password, created_at=current_time, is_confirmed=False, profile_picture_path=profile_picture_path)
     db.session.add(user)
     db.session.commit()
     return user, True
@@ -76,6 +76,13 @@ def get_all_users():
     List all users.
     """
     return User.query.all()
+
+
+def get_user_by_id(user_id):
+    """
+    Returns a single user by id.
+    """
+    return User.query.get(user_id)
 
 
 ##### ITEM #####

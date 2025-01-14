@@ -3,10 +3,12 @@ from ..models.database_service import get_all_boxes, get_all_users, get_items
 
 main = Blueprint('main', __name__)
 
-from . import auth, inventory
+from . import auth, inventory, user
 
 main.register_blueprint(auth.auth_bp, url_prefix='/auth')
 main.register_blueprint(inventory.inventory_bp, url_prefix='/inventory')
+main.register_blueprint(user.user_pb, url_prefix='/user')
+
 
 @main.route('/test/items', methods=['GET'])
 def get_items_list():

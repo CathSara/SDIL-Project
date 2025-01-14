@@ -7,12 +7,25 @@ class Box(db.Model):
     name = db.Column(db.String(100), nullable=False)
     location = db.Column(db.String(255), nullable=False)
     items = db.relationship('Item', backref='box', lazy=True)  # Relationship with items
+    box_picture_path = db.Column(db.String(255), nullable=True)
+    maps_link = db.Column(db.String(255), nullable=True)
+    opened_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', name='fk_boxes_opened_by_id'),
+        nullable=True
+    )  # Foreign key: The user who opened the box (optional)
+    opened_by = db.relationship('User', foreign_keys=[opened_by_id], backref='boxes_opened')
+    opened_at = db.Column(db.DateTime, nullable=True, default=func.now())
 
     def to_dict(self):
         return {
             "id": self.id,
             "name": self.name,
-            "location": self.location
+            "location": self.location,
+            "box_picture_path": self.box_picture_path,
+            "maps_link": self.maps_link,
+            "opened_by_id": self.opened_by_id,
+            "opened_at": self.opened_at
         }
 
 
@@ -99,6 +112,7 @@ class User(db.Model):
     password = db.Column(db.String(120))
     created_at = db.Column(db.DateTime, default=func.now())
     is_confirmed = db.Column(db.Boolean, default=False)
+    profile_picture_path = db.Column(db.String(255), default="")
 
     def to_dict(self):
         return {
@@ -107,7 +121,8 @@ class User(db.Model):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "password": self.password,
-            "is_confirmed": self.is_confirmed
+            "is_confirmed": self.is_confirmed,
+            "profile_picture_path": self.profile_picture_path
         }
 
 
