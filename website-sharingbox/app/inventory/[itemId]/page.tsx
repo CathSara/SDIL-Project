@@ -31,9 +31,7 @@ export default function ItemDetailPage({ params }: { params: Promise<{ itemId: s
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const router = useRouter();
   const itemIdRef = useRef<string | null>(null);
-
-  // Replace with actual user ID
-  const userId = 1; // Hardcoded for now, replace with actual user ID from context or authentication.
+  const userId = getCookie("user_id");
 
   // Fetch item details
   useEffect(() => {
@@ -109,6 +107,17 @@ export default function ItemDetailPage({ params }: { params: Promise<{ itemId: s
       .then(() => setIsFavorited(false))
       .catch((error) => console.error("Error unliking item:", error));
   };
+
+  function getCookie(name: string) {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [key, value] = cookie.split("=");
+      if (key === name) {
+        return value;
+      }
+    }
+    return null;
+  }
 
   if (!itemDetail) {
     return <p className="text-white text-center text-xl">Loading item details...</p>;

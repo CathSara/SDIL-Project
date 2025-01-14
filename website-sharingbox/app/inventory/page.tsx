@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Navigation from '../components/Navigation';
 import Link from 'next/link';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
+import ProfileMenu from '../components/ProfileMenu';
 
 interface Item {
   id: number;
@@ -100,12 +101,7 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-mint-green flex flex-col items-center">
       {/* Header Section */}
-      <header className="w-full bg-mint-green text-dark-green">
-        <div className="container mx-auto px-10 py-16">
-          <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
-        </div>
-      </header>
-      <Navigation />
+      <Header></Header>
       {/* Search Bar */}
       <div className="w-full bg-mint-green white py-4 px-8 shadow-md flex justify-center">
         <div className="sm:space-x-4 flex flex-col justify-center sm:flex-row sm:items-center w-full max-w-screen-lg">
@@ -156,29 +152,10 @@ export default function Page() {
 
           {/* Reserved and Liked Items Buttons */}
           <div className="flex flex-row justify-center">
-            <button
-              onClick={fetchReservedItems}
-              className="flex flex-col items-center text-black text-sm rounded-md hover:bg-gray-100 mb-0 ml-0 sm:ml-16 mr-8 p-1"
-            >
-              <div className="mb-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-              </div>
-              <span>Reserved</span>
-            </button>
-
-            <button
-              onClick={fetchLikedItems}
-              className="flex flex-col items-center text-black text-sm rounded-md hover:bg-gray-100 mr-4 p-1"
-            >
-              <div className="mb-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                </svg>
-              </div>
-              <span>Liked</span>
-            </button>
+            <ProfileMenu
+              onReservedClick={fetchReservedItems}
+              onLikedClick={fetchLikedItems}
+            ></ProfileMenu>
           </div>
         </div>
       </div>
@@ -201,7 +178,9 @@ export default function Page() {
                       height="300"
                     />
                   </div>
-                  <h2 className="text-gray-800 font-semibold text-xl mb-2">{item.title}</h2>
+                  <h2 className="text-gray-800 font-semibold text-xl mb-2">
+                    {item.title}
+                  </h2>
                   {box && (
                     <p className="text-gray-600 text-md">
                       <strong>Located in:</strong> {box.name}
@@ -212,7 +191,7 @@ export default function Page() {
             );
           })
         ) : (
-          <p className="text-white text-center text-xl">No items found.</p>
+          <p className="text-dark-green text-center text-xl">No items found.</p>
         )}
       </main>
 

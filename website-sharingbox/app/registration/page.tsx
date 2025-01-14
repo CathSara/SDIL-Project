@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 const RegistrationPage: React.FC = () => {
     const router = useRouter();
@@ -101,18 +102,14 @@ const RegistrationPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-mint-green flex flex-col items-center justify-center">
             {/* Header Section */}
-            <header className="w-full bg-mint-green text-dark-green shadow-lg">
-                <div className="container mx-auto px-10 py-16">
-                    <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
-                </div>
-            </header>
+            <Header></Header>
 
             {/* Main Content */}
             <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-12">
-                <div className="bg-white shadow-2xl rounded-lg p-12 transform transition duration-500 hover:scale-105 text-center w-full max-w-sm">
+                <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-sm">
                     {isAwaitingConfirmation ? (
                         <>
-                            <h2 className="text-gray-800 font-bold text-3xl mb-6">Confirm Your Account</h2>
+                            <h2 className="text-gray-800 font-bold text-3xl mb-6 text-center">Confirm Your Account</h2>
                             <form onSubmit={handleTokenConfirmation}>
                                 <div className="mb-6">
                                     <label htmlFor="token" className="block text-gray-700 font-medium mb-3 text-lg">
@@ -140,11 +137,11 @@ const RegistrationPage: React.FC = () => {
                         </>
                     ) : (
                         <>
-                            <h2 className="text-gray-800 font-bold text-3xl mb-6">Registration</h2>
+                            <h2 className="text-gray-800 font-bold text-3xl mb-6  text-center">Registration</h2>
                             <form onSubmit={handleSubmit}>
                                 <div className="mb-6">
-                                    <label htmlFor="firstname" className="block text-gray-700 font-medium mb-3 text-lg">
-                                        Firstname
+                                    <label htmlFor="firstname" className="block text-gray-700 font-medium mb-1 text-lg">
+                                        Firstname*
                                     </label>
                                     <input
                                         type="text"
@@ -159,8 +156,8 @@ const RegistrationPage: React.FC = () => {
                                 </div>
 
                                 <div className="mb-6">
-                                    <label htmlFor="lastname" className="block text-gray-700 font-medium mb-3 text-lg">
-                                        Lastname
+                                    <label htmlFor="lastname" className="block text-gray-700 font-medium mb-1 text-lg">
+                                        Lastname*
                                     </label>
                                     <input
                                         type="text"
@@ -175,8 +172,8 @@ const RegistrationPage: React.FC = () => {
                                 </div>
 
                                 <div className="mb-6">
-                                    <label htmlFor="phone_number" className="block text-gray-700 font-medium mb-3 text-lg">
-                                        Phone Number
+                                    <label htmlFor="phone_number" className="block text-gray-700 font-medium mb-1 text-lg">
+                                        Phone Number*
                                     </label>
                                     <input
                                         type="tel"
@@ -191,8 +188,8 @@ const RegistrationPage: React.FC = () => {
                                 </div>
 
                                 <div className="mb-6">
-                                    <label htmlFor="password" className="block text-gray-700 font-medium mb-3 text-lg">
-                                        Password
+                                    <label htmlFor="password" className="block text-gray-700 font-medium mb-1 text-lg">
+                                        Password*
                                     </label>
                                     <input
                                         type="password"
@@ -207,8 +204,8 @@ const RegistrationPage: React.FC = () => {
                                 </div>
 
                                 <div className="mb-6">
-                                    <label htmlFor="repeatPassword" className="block text-gray-700 font-medium mb-3 text-lg">
-                                        Repeat Password
+                                    <label htmlFor="repeatPassword" className="block text-gray-700 font-medium mb-1 text-lg">
+                                        Repeat Password*
                                     </label>
                                     <input
                                         type="password"
@@ -224,12 +221,16 @@ const RegistrationPage: React.FC = () => {
 
                                 {error && <p className="text-red-500 text-lg mb-4">{error}</p>}
 
+                                <span>All fields marked with * need to be filled in.</span>
+
                                 <button
                                     type="submit"
-                                    className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green"
+                                    className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green mt-5"
                                 >
-                                    Register
+                                    Sign Up
                                 </button>
+
+                                <p className='text-sm mt-2'>By registering, you are accepting the <u>terms of use</u>.</p>
                             </form>
                         </>
                     )}

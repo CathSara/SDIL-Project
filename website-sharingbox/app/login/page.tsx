@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 const LoginPage: React.FC = () => {
     const router = useRouter();
@@ -50,16 +51,12 @@ const LoginPage: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-r bg-mint-green flex flex-col items-center justify-center">
             {/* Header Section */}
-            <header className="w-full bg-mint-green text-dark-green shadow-lg">
-                <div className="container mx-auto px-10 py-16">
-                    <h1 className="text-5xl font-extrabold text-center">Your Smart Giveaway Box</h1>
-                </div>
-            </header>
+            <Header></Header>
 
             {/* Main Content */}
             <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-12">
-                <div className="bg-white shadow-2xl rounded-lg p-12 transform transition duration-500 hover:scale-105 text-center w-full max-w-sm">
-                    <h2 className="text-dark- font-bold text-3xl mb-6">Login</h2>
+                <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-sm">
+                    <h2 className="text-dark- font-bold text-3xl mb-6 text-center">Login</h2>
                     {errorMessage && (
                         <p className="text-red-500 mb-4 text-lg">{errorMessage}</p>
                     )}
@@ -95,10 +92,14 @@ const LoginPage: React.FC = () => {
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3"
                         >
                             Sign In
                         </button>
+                        <a className='flex justify-center' href="/registration">
+                            <span className='mr-1'>New member?</span>
+                            <u>Start here.</u>
+                        </a>
                     </form>
                 </div>
             </main>
