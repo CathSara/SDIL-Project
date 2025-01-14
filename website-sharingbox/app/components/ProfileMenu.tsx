@@ -5,9 +5,12 @@ import Image from "next/image";
 interface ProfileMenuProps {
   onReservedClick: () => void;
   onLikedClick: () => void;
+  name: string;
+  path: string;
+  id: string;
 }
 
-export default function ProfileMenu({ onReservedClick, onLikedClick }: ProfileMenuProps) {
+export default function ProfileMenu({ onReservedClick, onLikedClick, name, path, id }: ProfileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleReservedClick = () => {
@@ -24,7 +27,7 @@ export default function ProfileMenu({ onReservedClick, onLikedClick }: ProfileMe
     <div className="relative sm:ml-12">
       <div className="text-black text-sm flex flex-col items-center">
         <Image
-          src="/profiles/dana.jpg"
+          src={path}
           className="rounded-full"
           width={0}
           height={0}
@@ -33,7 +36,7 @@ export default function ProfileMenu({ onReservedClick, onLikedClick }: ProfileMe
           alt={""}
           onClick={() => setIsOpen(!isOpen)}
         />
-        <span>Dana</span>
+        <span>{name}</span>
       </div>
       {/* Overlay Menu */}
       {isOpen && (
@@ -41,7 +44,7 @@ export default function ProfileMenu({ onReservedClick, onLikedClick }: ProfileMe
           <ul className="py-2">
             <li className="hover:bg-gray-100 cursor-pointer">
               <Link
-                href="/profile"
+                href={`/profile/${id}`}
                 className="block px-4 py-2 flex items-center"
               >
                 <svg

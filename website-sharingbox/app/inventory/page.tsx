@@ -28,8 +28,15 @@ interface Category {
   name: string;
 }
 
+interface User {
+  first_name: string;
+  profile_picture_path: string;
+  last_name: string;
+}
+
 export default function Page() {
   const [items, setItems] = useState<Item[]>([]);
+  const[user, setUser] = useState<User>();
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchString, setSearchString] = useState('');
@@ -52,6 +59,9 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
       .catch((error) => console.error('Error fetching categories:', error));
+
+      fetchUser();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -81,6 +91,14 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
       .catch((error) => console.error('Error fetching liked items:', error));
+  };
+
+  const fetchUser = () => {
+    if (!userId) return;
+    fetch(`http://127.0.0.1:5000/user/get?user_id=${userId}`)
+      .then((response) => response.json())
+      .then((data: User) => setUser(data))
+      .catch((error) => console.error("Error fetching liked items:", error));
   };
 
   const handleSearch = () => {
@@ -155,6 +173,9 @@ export default function Page() {
             <ProfileMenu
               onReservedClick={fetchReservedItems}
               onLikedClick={fetchLikedItems}
+              name={user?.first_name || "Name"}
+              path={user?.profile_picture_path || "/boxes/sülz.jpeg"} // fallback
+              id={userId || "0"}
             ></ProfileMenu>
           </div>
         </div>
