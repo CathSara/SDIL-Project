@@ -35,24 +35,26 @@ export default function Page({
     <div>
       <Header></Header>
       {/* Main Content */}
-      <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-8">
-        <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-sm">
-          <h2 className="text-dark- font-bold text-3xl mb-6 text-center">
-            {user?.first_name} {user?.last_name}
-            <Image
-              src={user?.profile_picture_path || "/boxes/sülz.jpeg"}
-              className="rounded-full mt-5"
-              width={0}
-              height={0}
-              sizes="100vw"
-              style={{ width: "100%", height: "auto" }}
-              alt={""}
-            />
-          </h2>
-        </div>
-      </main>
+      <div className=" bg-mint-green">
+        <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-8">
+          <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-sm">
+            <h2 className="text-dark- font-bold text-3xl mb-6 text-center">
+              {user?.first_name} {user?.last_name}
+              <Image
+                src={user?.profile_picture_path || "/boxes/sülz.jpeg"}
+                className="rounded-full mt-5"
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: "100%", height: "auto" }}
+                alt={""}
+              />
+            </h2>
+          </div>
+        </main>
 
-      <Footer></Footer>
+        <Footer></Footer>
+      </div>
     </div>
   );
 }
