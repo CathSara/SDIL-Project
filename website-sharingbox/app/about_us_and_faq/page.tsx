@@ -1,140 +1,169 @@
 "use client";
 
-import React, { useState } from 'react';
-import Navigation from '../components/Navigation';
+import React, { useState } from "react";
 import Link from "next/link";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 /* Used help in ChatGPT to add simple toggle bars for FAQ and the links to Take/Donate page as well as its hovering effects */
 export default function Page() {
-
   /* Toggle bar with question opened or closed? */
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const toggleFAQ = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-    return (
-        <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center">
-          {/* Header Section */}
-          <header className="w-full bg-blue-600 text-white shadow-lg">
-            <div className="container mx-auto px-10 py-16">
-              <h1 className="text-5xl font-extrabold text-center">Sharing Box Köln!</h1>
+  return (
+    <div className="min-h-screen bg-gradient-to-r bg-mint-green flex flex-col items-center justify-center">
+      {/* Header Section */}
+      <Header></Header>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-12">
+        <h1 className="text-2xl font-bold mb-6">About Us</h1>
+        <p className="text-xl mb-4">
+          We are a group of students at the University of Cologne dedicated to
+          creating an innovative solution for a more sustainable future.
+        </p>
+        <p className="text-xl mb-4">
+          The smart giveaway box is a prototype designed to increase the
+          lifecycle of products, reduce waste, and promote community sharing.
+        </p>
+        <p className="text-xl mb-4">
+          Have items you no longer need? Want to collect free items or make our
+          world more sustainable? You’re in the right place!
+        </p>
+        <p className="text-xl mb-4">
+          Whether you want to donate or take items, we’re excited to welcome you
+          to our community!
+        </p>
+
+        <h2 className="text-2xl font-bold mb-6">Project Team:</h2>
+        <p className="text-xl mb-6">
+          Tim Hebestreit, Chiara Seidenath, Johannes Simon, Max Unterbusch,
+          Leonard Glock
+        </p>
+
+        {/* FAQ Section */}
+        <h1 className="text-2xl font-bold mb-6">FAQ</h1>
+
+        <div className="space-y-4 w-full max-w-3xl">
+          {/* FAQ Item */}
+          {[
+            {
+              question: "What is the smart giveaway box?",
+              answer: (
+                <>
+                  It combines:
+                  <ul className="list-disc pl-6">
+                    <li>Common giveaway boxes</li>
+                    <li>The design and location of public bookcases</li>
+                    <li>
+                      Technological components providing security and smart
+                      inventory management
+                    </li>
+                  </ul>
+                </>
+              ),
+            },
+            {
+              question: "How can I donate an item?",
+              answer: (
+                <>
+                  After logging in, visit the{" "}
+                  <Link
+                    href="/box_interaction/take_or_donate"
+                    className="text-white underline hover:text-yellow-300"
+                  >
+                    &quot;Take/Donate an Item&quot;
+                  </Link>{" "}
+                  page. Click &quot;Donate Item&quot; and follow the website
+                  instructions.
+                </>
+              ),
+            },
+            {
+              question: "Which items are allowed to be put into the box?",
+              answer: (
+                <>
+                  You can donate material goods that are in good condition. Food
+                  items are not allowed. The box scans your item to verify its
+                  condition.
+                </>
+              ),
+            },
+            {
+              question:
+                "How does the box recognize whether my item is allowed?",
+              answer: (
+                <>
+                  When you place your item on the upper shelf, the box takes a
+                  picture and sends it to the server for recognition. The result
+                  will be shown on the website.
+                </>
+              ),
+            },
+            {
+              question: "How can I take an item from the box?",
+              answer: (
+                <>
+                  After logging in, visit the{" "}
+                  <Link
+                    href="/box_interaction/take_or_donate"
+                    className="text-white underline hover:text-yellow-300"
+                  >
+                    &quot;Take/Donate an Item&quot;
+                  </Link>{" "}
+                  page. Click &quot;Take Item&quot; and follow the instructions.
+                </>
+              ),
+            },
+            {
+              question: "Can I take items from the box for free?",
+              answer: "Yes, you can!",
+            },
+            {
+              question: "Can I also give a tip after taking an item?",
+              answer:
+                "This feature is currently under development. Stay tuned for more!",
+            },
+            {
+              question: "How do I contact support in case of a problem?",
+              answer: (
+                <>
+                  Send your questions or feedback via the{" "}
+                  <Link
+                    href="/support"
+                    className="text-white underline hover:text-yellow-300"
+                  >
+                    Support page
+                  </Link>
+                  . We look forward to hearing from you!
+                </>
+              ),
+            },
+          ].map((faq, index) => (
+            <div key={index} className="border-b-2 border-dark-green">
+              <button
+                className="text-xl text-white font-bold w-full text-left p-4 bg-green-900 hover:bg-green700 transition-all"
+                onClick={() => toggleFAQ(index)}
+              >
+                {faq.question}
+              </button>
+              {activeIndex === index && (
+                <p className="text-xl text-white mb-6 p-4 bg-green-700">
+                  {faq.answer}
+                </p>
+              )}
             </div>
-          </header>
-          <Navigation />
-          {/* Main Content */}
-          <h1 className="text-2xl font-bold mb-6"></h1>
-          {/* About Us */}
-          <h1 className="text-2xl font-bold mb-6">About Us</h1>
-          <h1 className="text-xl mb-2">We are a group of students of the University of Cologne that has dedicated this project to create an innovative solution for a more sustainable future.</h1>
-          <h1 className="text-xl mb-2">The smart giveaway box is a prototype that aims to increase the life cycle of products, reduce waste and promote community sharing.</h1>
-          <h1 className="text-xl mb-2">Do you have any items that you do no longer need and might be more useful for others? Do you want to collect any free items? Or do you just want to make our world a little bit more sustainable?</h1>
-          <h1 className="text-xl mb-2">In any case, you are at the right place!</h1>
-          <h1 className="text-xl mb-2">Whether you want to donate or take items for your own purpose or for supporting sustainability, we are excited to see you joining our community!</h1>
-          <h1 className="text-xl mb-2"></h1>
-          <h1 className="text-xl font-bold mb-2">Project Team:</h1>
-          <h1 className="text-xl mb-2">Tim Hebestreit, Chiara Seidenath, Johannes Simon, Max Unterbusch and Leonard Glock</h1>
-          <h1 className="text-2xl font-bold mb-6"></h1>
-          {/* FAQ */}
-          <h1 className="text-2xl font-bold mb-6">FAQ</h1>
-          <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(1)}
-          >
-            What is the smart giveaway box?
-          </button>
-          {activeIndex === 1 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">It is a combination of: <li>the usage of common giveaway boxes,</li> <li>the design and location of public bookcases and</li> <li>technological components that provide security and smart inventory management.</li> </p>
-          )}
+          ))}
         </div>
-        <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(2)}
-          >
-            How can I donate an item?
-          </button>
-          {activeIndex === 2 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">After you have logged in, please open the page {" "}
-            <Link href="/box_interaction/take_or_donate" className="text-white underline hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-              "Take/Donate an Item",
-            </Link>{" "} click on the button "Donate Item" and then follow the instructions on the website.</p>
-          )}
-        </div>
-        <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(3)}
-          >
-            Which items are allowed to be put into the box?
-          </button>
-          {activeIndex === 3 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">You are allowed to donate material goods that are not in poor condition. You are not allowed to donate any food items. Before you are able to donate, the box scans your item to check these conditions.</p>
-          )}
-        </div>
-        <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(4)}
-          >
-            How does the box recognize whether my item is allowed to be put into the box?
-          </button>
-          {activeIndex === 4 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">Once you put your item into the upper shelf of the box, it takes a picture of the item and sends it to the server for the recognition. You will then see the result on the website.</p>
-          )}
-        </div>
-        <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(5)}
-          >
-            How can I take an item from the box?
-          </button>
-          {activeIndex === 5 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">After you have logged in, please open the page {" "}
-            <Link href="/box_interaction/take_or_donate" className="text-white underline hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-              "Take/Donate an Item",
-            </Link>{" "} click on the button "Take Item" and then follow the instructions on the website.</p>
-          )}
-        </div>
-        <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(6)}
-          >
-           Can I take items from the box for free?
-          </button>
-          {activeIndex === 6 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">Yes, you can!</p>
-          )}
-        </div>
-        <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(7)}
-          >
-           Can I also give a tip after taking an item?
-          </button>
-          {activeIndex === 7 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">This is currently in work. Find out more soon!</p>
-          )}
-        </div>
-        <div>
-          <button
-            className="text-xl mb-6 font-bold w-full border-2 border-white text-left p-4 bg-blue-700 hover:bg-blue-800"
-            onClick={() => toggleFAQ(8)}
-          >
-           How do I contact the support in case there is a problem?
-          </button>
-          {activeIndex === 8 && (
-            <p className="text-xl mb-6 p-4 bg-blue-800">Feel free to send us your questions, comments or feedback through the {" "}
-            <Link href="/support" className="text-white underline hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-              Support page.
-            </Link>{" "} We look forward to hearing from you!</p>
-          )}
-        </div>
-        <h1 className="mb-2">More frequently asked questions might be added soon.</h1>
+
+        <h1 className="text-xl text-center mt-6">
+          More frequently asked questions might be added soon.
+        </h1>
       </div>
-    );
-  }
+      <Footer></Footer>
+    </div>
+  );
+}
