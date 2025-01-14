@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Navigation from '../components/Navigation';
 import Link from 'next/link';
+import Footer from '../components/Footer';
 
 interface Item {
   id: number;
@@ -215,6 +216,8 @@ export default function Page() {
         )}
       </main>
 
+      {/* Footer */}
+      <Footer></Footer>
     </div>
   );
 }

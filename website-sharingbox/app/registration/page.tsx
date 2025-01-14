@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import Footer from '../components/Footer';
 
 const RegistrationPage: React.FC = () => {
     const router = useRouter();
@@ -234,6 +235,9 @@ const RegistrationPage: React.FC = () => {
                     )}
                 </div>
             </main>
+
+            {/* Footer */}
+            <Footer></Footer>
         </div>
     );
 };

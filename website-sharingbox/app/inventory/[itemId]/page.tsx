@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, use } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Footer from "@/app/components/Footer";
 
 interface ItemDetail {
   id: number;
@@ -183,6 +184,9 @@ export default function ItemDetailPage({ params }: { params: Promise<{ itemId: s
           </button>
         </div>
       </main>
+      
+      {/* Footer */}
+      <Footer></Footer>
     </div>
   );
 }
