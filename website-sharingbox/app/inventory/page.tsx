@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import ProfileMenu from '../components/ProfileMenu';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import ProfileMenu from "../components/ProfileMenu";
 
 interface Item {
   id: number;
@@ -36,45 +36,62 @@ interface User {
 
 export default function Page() {
   const [items, setItems] = useState<Item[]>([]);
-  const[user, setUser] = useState<User>();
+  const [user, setUser] = useState<User>();
   const [boxes, setBoxes] = useState<Box[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [searchString, setSearchString] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedBox, setSelectedBox] = useState('');
-  const userId = getCookie('user_id')
+  const [searchString, setSearchString] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedBox, setSelectedBox] = useState("");
+  const userId = getCookie("user_id");
+  const [viewName, setViewName] = useState("All Items");
 
   useEffect(() => {
     // Fetch initial items
     fetchItems();
 
     // Fetch boxes
-    fetch('http://127.0.0.1:5000/inventory/boxes')
+    fetch("http://127.0.0.1:5000/inventory/boxes")
       .then((response) => response.json())
       .then((data: Box[]) => setBoxes(data))
-      .catch((error) => console.error('Error fetching boxes:', error));
+      .catch((error) => console.error("Error fetching boxes:", error));
 
     // Fetch categories
-    fetch('http://127.0.0.1:5000/inventory/categories')
+    fetch("http://127.0.0.1:5000/inventory/categories")
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
-      .catch((error) => console.error('Error fetching categories:', error));
+      .catch((error) => console.error("Error fetching categories:", error));
 
-      fetchUser();
+    fetchUser();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchItems = () => {
     const params = new URLSearchParams();
-    if (searchString) params.append('search_string', searchString);
-    if (selectedCategory) params.append('category', selectedCategory);
-    if (selectedBox) params.append('box_id', selectedBox);
+    if (searchString) params.append("search_string", searchString);
+    if (selectedCategory) params.append("category", selectedCategory);
+    if (selectedBox) params.append("box_id", selectedBox);
 
     fetch(`http://127.0.0.1:5000/inventory/items?${params.toString()}`)
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
-      .catch((error) => console.error('Error fetching items:', error));
+      .catch((error) => console.error("Error fetching items:", error));
+
+    let viewName = "";
+    if (searchString) {
+      viewName += "'" + searchString + "'";
+    }
+    if (selectedCategory) {
+      viewName += " in " + selectedCategory;
+    }
+    if (selectedBox) {
+      const box = boxes.find((box) => String(box.id) === selectedBox);
+      viewName += " at " + box?.name;
+    }
+    if (viewName === "") {
+      viewName = "All items";
+    }
+    setViewName(viewName);
   };
 
   const fetchReservedItems = () => {
@@ -82,7 +99,8 @@ export default function Page() {
     fetch(`http://127.0.0.1:5000/inventory/get_reserved?user_id=${userId}`)
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
-      .catch((error) => console.error('Error fetching reserved items:', error));
+      .catch((error) => console.error("Error fetching reserved items:", error));
+      setViewName("Your Reservations");
   };
 
   const fetchLikedItems = () => {
@@ -90,7 +108,8 @@ export default function Page() {
     fetch(`http://127.0.0.1:5000/inventory/get_favorites?user_id=${userId}`)
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
-      .catch((error) => console.error('Error fetching liked items:', error));
+      .catch((error) => console.error("Error fetching liked items:", error));
+    setViewName("Your Favorites");
   };
 
   const fetchUser = () => {
@@ -106,9 +125,9 @@ export default function Page() {
   };
 
   function getCookie(name: string) {
-    const cookies = document.cookie.split('; ');
+    const cookies = document.cookie.split("; ");
     for (const cookie of cookies) {
-      const [key, value] = cookie.split('=');
+      const [key, value] = cookie.split("=");
       if (key === name) {
         return value;
       }
@@ -181,8 +200,27 @@ export default function Page() {
         </div>
       </div>
 
+      <div className="w-full px-8 py-2 flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="size-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m8.25 4.5 7.5 7.5-7.5 7.5"
+          />
+        </svg>
+
+        <h1 className="text-2xl text-gray-700">{viewName}</h1>
+      </div>
+
       {/* Main Content */}
-      <main className="flex-grow container mx-auto px-8 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <main className="flex-grow container mx-auto px-8 pb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.length > 0 ? (
           items.map((item) => {
             const box = boxes.find((box) => box.id === item.box_id);
