@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 const LoginPage: React.FC = () => {
     const router = useRouter();
@@ -26,8 +28,14 @@ const LoginPage: React.FC = () => {
 
             if (response.ok) {
                 const data = await response.json();
+
+                // Store the token in localStorage (if needed for API requests)
                 localStorage.setItem('token', data.token);
 
+                // Store the user ID as a session cookie
+                document.cookie = `user_id=${data.user_id}; path=/;`;
+
+                // Redirect to inventory page
                 router.push('/inventory');
             } else {
                 const errorData = await response.json();
@@ -39,19 +47,16 @@ const LoginPage: React.FC = () => {
         }
     };
 
+
     return (
-        <div className="min-h-screen bg-gradient-to-r from-blue-500 to-purple-600 flex flex-col items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-r bg-mint-green flex flex-col items-center justify-center">
             {/* Header Section */}
-            <header className="w-full bg-blue-600 text-white shadow-lg">
-                <div className="container mx-auto px-10 py-16">
-                    <h1 className="text-5xl font-extrabold text-center">Sharing Box Köln!</h1>
-                </div>
-            </header>
+            <Header></Header>
 
             {/* Main Content */}
             <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-12">
-                <div className="bg-white shadow-2xl rounded-lg p-12 transform transition duration-500 hover:scale-105 text-center w-full max-w-sm">
-                    <h2 className="text-gray-800 font-bold text-3xl mb-6">Login</h2>
+                <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-sm">
+                    <h2 className="text-dark- font-bold text-3xl mb-6 text-center">Login</h2>
                     {errorMessage && (
                         <p className="text-red-500 mb-4 text-lg">{errorMessage}</p>
                     )}
@@ -65,7 +70,8 @@ const LoginPage: React.FC = () => {
                                 id="phone_number"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
-                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green
+                                "
                                 placeholder="Enter your phone number"
                                 required
                             />
@@ -79,20 +85,27 @@ const LoginPage: React.FC = () => {
                                 id="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                                 placeholder="Enter your password"
                                 required
                             />
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-blue-500 text-white py-3 px-6 rounded-lg text-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="w-full bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3"
                         >
                             Sign In
                         </button>
+                        <a className='flex justify-center' href="/registration">
+                            <span className='mr-1'>New member?</span>
+                            <u>Start here.</u>
+                        </a>
                     </form>
                 </div>
             </main>
+            
+            {/* Footer */}
+            <Footer></Footer>
         </div>
     );
 };

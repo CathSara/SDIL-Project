@@ -85,7 +85,7 @@ flask db upgrade
 
 4. Run the flask application.
 
-5. While the Flask app is running, open another terminal/ssh tab. Within the smart-greenhousy-plaenty/ folder, and activate the environment again. Then, seed the database by running:
+5. While the Flask app is running, open another terminal/ssh tab. Within the SDIL-Project / folder, and activate the environment again. Then, seed the database by running:
 
 ```
 export FLASK_APP=run.py

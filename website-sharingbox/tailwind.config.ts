@@ -11,6 +11,12 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'beige-green': '#a1b0a4',
+        'mint-green': '#f1efe1',
+        'dark-green': '#305626',
+        'lighter-green': '#c3cab9', //#c4cbba
+        'dark-green-hover': '#223d1b',
+        'dark-blue': '#192954',
       },
     },
   },
