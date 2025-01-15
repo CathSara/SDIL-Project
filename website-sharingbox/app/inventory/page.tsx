@@ -141,7 +141,7 @@ export default function Page() {
       {/* Header Section */}
       <Header></Header>
       {/* Search Bar */}
-      <div className="w-full bg-mint-green white py-4 px-8 shadow-md flex justify-center">
+      <div className="w-full bg-mint-green white py-1 px-8 shadow-md flex justify-center">
         <div className="sm:space-x-4 flex flex-col justify-center sm:flex-row sm:items-center w-full max-w-screen-lg">
           {/* Search Input */}
           <input
