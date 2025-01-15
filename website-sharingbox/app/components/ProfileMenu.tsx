@@ -27,7 +27,7 @@ export default function ProfileMenu({ onReservedClick, onLikedClick, name, path,
     <div className="relative sm:ml-12">
       <div className="text-black text-sm flex flex-col items-center">
         <Image
-          src={path}
+          src={path || "/profiles/default.png"}
           className="rounded-full"
           width={0}
           height={0}

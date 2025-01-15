@@ -310,7 +310,7 @@ export default function ItemDetailPage({
                   className="block px-4 py-2 flex items-center"
                 >
                   <Image
-                    src={donor?.profile_picture_path || "/profiles/dana.jpg"}
+                    src={donor?.profile_picture_path || "/profiles/default.png"}
                     className="rounded-full object-cover w-[40px] h-[40px]"
                     width={40}
                     height={40}

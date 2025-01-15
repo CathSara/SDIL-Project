@@ -1,21 +1,40 @@
-from flask import Blueprint, request, jsonify
+import os
+from PIL import Image
+from flask import Blueprint, Flask, request, jsonify, current_app
 from ..models.database_service import create_user, authenticate_user, confirm_user
 
 auth_bp = Blueprint('auth', __name__)
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
+    data = request.form
     phone_number = data['phone_number']
     first_name = data['first_name']
     last_name = data['last_name']
     password_raw = data['password']
 
-    user, is_created = create_user(phone_number, first_name, last_name, password_raw)
+    profile_picture = request.files.get('profile_picture')
+    profile_picture_path = None
+
+    if profile_picture and allowed_file(profile_picture.filename):
+        filename = f"{phone_number}.{profile_picture.filename.rsplit('.', 1)[1].lower()}"
+        filepath = os.path.join(os.getcwd(), 'website-sharingbox', 'public', 'profiles', filename)
+
+        img = Image.open(profile_picture)
+        img = img.resize((256, 256))
+
+        img.save(filepath)
+        profile_picture_path = f"/profiles/{filename}"
+
+    user, is_created = create_user(phone_number, first_name, last_name, password_raw, profile_picture_path)
 
     if is_created:
-        return jsonify({'message': 'User registered successfully, but not confirmed!',
-                        'user_id': user.id}), 201
+        return jsonify({'message': 'User registered successfully, but not confirmed!', 'user_id': user.id}), 201
     else:
         return jsonify({'message': 'User already exists'}), 409
 

@@ -192,7 +192,7 @@ export default function Page() {
               onReservedClick={fetchReservedItems}
               onLikedClick={fetchLikedItems}
               name={user?.first_name || "Name"}
-              path={user?.profile_picture_path || "/boxes/sülz.jpeg"} // fallback
+              path={user?.profile_picture_path || "/profiles/default.png"} // fallback
               id={userId || "0"}
             ></ProfileMenu>
           </div>

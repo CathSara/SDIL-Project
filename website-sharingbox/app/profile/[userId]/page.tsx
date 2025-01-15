@@ -43,7 +43,7 @@ export default function Page({
             <h2 className="text-dark- font-bold text-3xl mb-6 text-center">
               {user?.first_name} {user?.last_name}
               <Image
-                src={user?.profile_picture_path || "/boxes/sülz.jpeg"}
+                src={user?.profile_picture_path || "/profiles/default.png"}
                 className="rounded-full mt-5"
                 width={0}
                 height={0}
