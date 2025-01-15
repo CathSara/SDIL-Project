@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
+import Link from "next/link";
 
 interface ItemDetail {
   id: number;
@@ -273,19 +274,24 @@ export default function ItemDetailPage({
                 </p>
               </div>
               <div className="flex items-center">
-                <Image
-                  src={donor?.profile_picture_path || "/profiles/dana.jpg"}
-                  className="rounded-full object-cover w-[40px] h-[40px]"
-                  width={40}
-                  height={40}
-                  alt={""}
-                />
-                <div>
-                  <p className="text-black text-xs ml-2">Donated by:</p>
-                  <p className="text-black text-l ml-2">
-                    {donor?.first_name} {donor?.last_name}
-                  </p>
-                </div>
+                <Link
+                  href={`/profile/${itemDetail.created_by_id}`}
+                  className="block px-4 py-2 flex items-center"
+                >
+                  <Image
+                    src={donor?.profile_picture_path || "/profiles/dana.jpg"}
+                    className="rounded-full object-cover w-[40px] h-[40px]"
+                    width={40}
+                    height={40}
+                    alt={""}
+                  />
+                  <div>
+                    <p className="text-black text-xs ml-2">Donated by:</p>
+                    <p className="text-black text-l ml-2">
+                      {donor?.first_name} {donor?.last_name}
+                    </p>
+                  </div>
+                </Link>
               </div>
 
               <hr className="border-gray-400 my-3" />
