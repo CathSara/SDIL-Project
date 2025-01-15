@@ -50,9 +50,11 @@ export default function ItemDetailPage({
   const [donor, setDonor] = useState<User>();
   const [isReserved, setIsReserved] = useState<boolean>(false);
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
+  const [reservationStatus, setReservationStatus] = useState<string>("");
   const router = useRouter();
   const itemIdRef = useRef<string | null>(null);
   const userId = getCookie("user_id");
+  const [timeIn20Minutes, setTimeIn20Minutes] = useState<string>("time");
 
   // Fetch item details
   useEffect(() => {
@@ -61,9 +63,22 @@ export default function ItemDetailPage({
     itemIdRef.current = itemId;
     fetch(`http://127.0.0.1:5000/inventory/item?item_id=${itemId}`)
       .then((response) => response.json())
-      .then((data) => setItemDetail(data))
+      .then((data) => {
+        setItemDetail(data);
+
+        setTimeIn20Minutes("Reserved until: " + data.reserved_until);
+
+        // Set reservation status based on reserved_by_id
+        if (data.reserved_by_id === null) {
+          setReservationStatus("not reserved");
+        } else if (data.reserved_by_id == userId) {
+          setReservationStatus("self-reserved");
+        } else {
+          setReservationStatus("reserved");
+        }
+      })
       .catch((error) => console.error("Error fetching item details:", error));
-  }, [itemId]);
+  }, [itemId, userId]);
 
   // Fetch box details
   useEffect(() => {
@@ -76,13 +91,15 @@ export default function ItemDetailPage({
   }, [itemDetail]);
 
   useEffect(() => {
-   if (itemDetail?.created_by_id) {
-    fetch(`http://127.0.0.1:5000/user/get?user_id=${itemDetail?.created_by_id}`)
-      .then((response) => response.json())
-      .then((data) => setDonor(data))
-      .catch((error) => console.error("Error fetching donor:", error));
-   }
-  })
+    if (itemDetail?.created_by_id) {
+      fetch(
+        `http://127.0.0.1:5000/user/get?user_id=${itemDetail?.created_by_id}`
+      )
+        .then((response) => response.json())
+        .then((data) => setDonor(data))
+        .catch((error) => console.error("Error fetching donor:", error));
+    }
+  });
 
   // Fetch reservation status
   useEffect(() => {
@@ -116,8 +133,12 @@ export default function ItemDetailPage({
       }
     )
       .then((response) => response.json())
-      .then(() => setIsReserved(true))
+      .then(() => {
+        setIsReserved(true);
+        setTimeIn20Minutes("Reserved for 20 Minutes");
+      })
       .catch((error) => console.error("Error reserving item:", error));
+    setReservationStatus("self-reserved");
   };
 
   const handleUnreserve = () => {
@@ -130,6 +151,7 @@ export default function ItemDetailPage({
       .then((response) => response.json())
       .then(() => setIsReserved(false))
       .catch((error) => console.error("Error unreserving item:", error));
+    setReservationStatus("not reserved");
   };
 
   const handleLike = () => {
@@ -176,7 +198,6 @@ export default function ItemDetailPage({
   return (
     <div className="min-h-screen bg-mint-green flex flex-col items-center">
       <Header></Header>
-
       <main className="flex-grow container mx-auto px-6 py-3">
         <div className="relative">
           <button
@@ -256,6 +277,16 @@ export default function ItemDetailPage({
           </div>
           <div className="flex sm:flex-row flex-col items-stretch">
             <div className="rounded-md mb-4 relative overflow-hidden">
+              {reservationStatus === "reserved" && (
+                <div className="absolute top-0 left-0 w-full bg-red-500 text-white text-center py-2 font-bold">
+                  Reserved
+                </div>
+              )}
+              {reservationStatus === "self-reserved" && (
+                <div className="absolute top-0 left-0 w-full bg-dark-green text-white text-center py-2 font-bold">
+                  {timeIn20Minutes}
+                </div>
+              )}
               <Image
                 src={itemDetail.image_path}
                 alt={itemDetail.title}
@@ -346,13 +377,16 @@ export default function ItemDetailPage({
               <hr className="border-gray-400 my-3" />
               <button
                 onClick={isReserved ? handleUnreserve : handleReserve}
+                disabled={reservationStatus == "reserved"}
                 className={`px-6 py-2 font-bold rounded-md w-full flex justify-center mb-4 ${
-                  isReserved
+                  reservationStatus == "self-reserved"
                     ? "bg-mint-green text-dark-green"
-                    : "bg-dark-green text-mint-green"
+                    : reservationStatus == "not reserved"
+                    ? "bg-dark-green text-mint-green"
+                    : "bg-gray-400 text-mint-green"
                 }`}
               >
-                {!isReserved ? (
+                {reservationStatus == "not reserved" ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -384,7 +418,11 @@ export default function ItemDetailPage({
                   </svg>
                 )}
 
-                {isReserved ? "Unreserve" : "Reserve"}
+                {reservationStatus == "not reserved"
+                  ? "Reserve"
+                  : reservationStatus == "self-reserved"
+                  ? "Unreserve"
+                  : "Reserved"}
               </button>
             </div>
           </div>
