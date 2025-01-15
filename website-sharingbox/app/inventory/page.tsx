@@ -15,6 +15,7 @@ interface Item {
   category: string;
   condition: string;
   box_id: number;
+  reserved_by_id: number;
 }
 
 interface Box {
@@ -100,7 +101,7 @@ export default function Page() {
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
       .catch((error) => console.error("Error fetching reserved items:", error));
-      setViewName("Your Reservations");
+    setViewName("Your Reservations");
   };
 
   const fetchLikedItems = () => {
@@ -186,8 +187,6 @@ export default function Page() {
           >
             Search
           </button>
-
-          {/* Reserved and Liked Items Buttons */}
           <div className="flex flex-row justify-center">
             <ProfileMenu
               onReservedClick={fetchReservedItems}
@@ -228,6 +227,17 @@ export default function Page() {
             return (
               <Link key={item.id} href={`/inventory/${item.id}`}>
                 <div className="bg-white shadow-lg rounded-lg p-6 transform transition duration-500 hover:scale-105 cursor-pointer">
+                  {String(item.reserved_by_id) == userId && (
+                    <div className="absolute top-0 rounded-t-lg left-0 w-full bg-dark-green text-white text-center py-2 font-bold z-50">
+                      Reserved by yourself
+                    </div>
+                  )}
+                  {String(item.reserved_by_id) != userId &&
+                    item.reserved_by_id && (
+                      <div className="absolute top-0 rounded-t-lg left-0 w-full bg-red-500 text-white text-center py-2 font-bold z-50">
+                        Reserved by someone else
+                      </div>
+                    )}
                   <div className="w-full h-64 bg-gray-100 rounded-md mb-4 relative overflow-hidden">
                     <Image
                       src={item.image_path}

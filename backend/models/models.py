@@ -81,6 +81,7 @@ class Item(db.Model):
             "description": self.description,
             "condition": self.condition,
             "box_id": self.box_id,
+            "reserved_by_id": self.reserved_by_id,
         }
     
     def to_detail_dict(self):
