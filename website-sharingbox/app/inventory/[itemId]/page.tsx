@@ -6,7 +6,6 @@ import Image from "next/image";
 import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import Link from "next/link";
-import { Span } from "next/dist/trace";
 
 interface ItemDetail {
   id: number;
