@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import ReturnButton from "../components/ReturnButton";
 
 const ProblemReportPage: React.FC = () => {
   const [problemCategory, setProblemCategory] = useState("");
@@ -14,8 +15,9 @@ const ProblemReportPage: React.FC = () => {
       <Header />
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-12">
-        <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-lg">
+      <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-4">
+        <ReturnButton></ReturnButton>
+        <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-lg my-4">
           <h2 className="text-dark- font-bold text-3xl mb-6 text-center">
             Report a Problem
           </h2>

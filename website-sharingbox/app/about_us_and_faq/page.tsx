@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ReturnButton from "../components/ReturnButton";
 
 /* Used help in ChatGPT to add simple toggle bars for FAQ and the links to Take/Donate page as well as its hovering effects */
 export default function Page() {
@@ -19,8 +20,10 @@ export default function Page() {
       <Header></Header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 py-12">
-        <h1 className="text-2xl font-bold mb-6">About Us</h1>
+      <div className="container mx-auto px-6 py-4">
+        <ReturnButton></ReturnButton>
+
+        <h1 className="text-2xl font-bold my-4">About Us</h1>
         <p className="text-xl mb-4">
           We are a group of students at the University of Cologne dedicated to
           creating an innovative solution for a more sustainable future.

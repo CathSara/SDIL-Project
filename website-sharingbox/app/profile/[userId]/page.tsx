@@ -4,6 +4,7 @@ import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import React, { use, useEffect, useState } from "react";
 import Image from "next/image";
+import ReturnButton from "@/app/components/ReturnButton";
 
 interface User {
   first_name: string;
@@ -37,6 +38,7 @@ export default function Page({
       {/* Main Content */}
       <div className=" bg-mint-green">
         <main className="flex-grow flex flex-col items-center justify-center container mx-auto px-8 py-8">
+          <ReturnButton></ReturnButton>
           <div className="bg-white shadow-2xl rounded-lg p-5 transform transition duration-500 hover:scale-105 w-full max-w-sm">
             <h2 className="text-dark- font-bold text-3xl mb-6 text-center">
               {user?.first_name} {user?.last_name}
