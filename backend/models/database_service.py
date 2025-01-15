@@ -146,6 +146,24 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     return "success"
 
 
+def update_item(item_id, title, description, category, condition):
+    item = Item.query.get(item_id)
+    check_and_update_reservation(item)
+    if not item:
+        return "item_error"
+    
+    if title:
+        item.title = title
+    if description:
+        item.description = description
+    if category:
+        item.category = category
+    if condition:
+        item.condition = condition
+    db.session.commit()
+    return item
+
+
 def update_item_as_unreserved(item_id, reserved_by_user_id):
     item = Item.query.get(item_id)
     check_and_update_reservation(item)

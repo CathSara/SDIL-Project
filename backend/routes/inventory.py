@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from ..models.database_service import add_favorite, get_all_boxes, get_box_by_id, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, is_item_reserved, remove_favorite, update_item_as_reserved, update_item_as_unreserved
+from ..models.database_service import add_favorite, get_all_boxes, get_box_by_id, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, is_item_reserved, remove_favorite, update_item_as_reserved, update_item_as_unreserved, update_item
 
 inventory_bp = Blueprint('inventory', __name__)
 
@@ -41,6 +41,25 @@ def get_item():
         return jsonify(item.to_detail_dict()), 200
     else:
         return jsonify({'message': 'Item not found'}), 404
+    
+
+@inventory_bp.route('/update', methods=['POST'])
+def update():
+    data = request.get_json()
+    item_id = data.get("item_id", None)
+    title = data.get("title", None)
+    description = data.get("description", None)
+    category = data.get("category", None)
+    condition = data.get("condition", None)
+
+    print("update called with item id:", item_id)
+
+    item = update_item(item_id, title, description, category, condition)
+
+    if item == "item_error":
+        return jsonify({'message': 'Item not found'}), 404
+    else:
+        return jsonify(item.to_detail_dict()), 200
     
 
 @inventory_bp.route('/reserve', methods=['POST'])
