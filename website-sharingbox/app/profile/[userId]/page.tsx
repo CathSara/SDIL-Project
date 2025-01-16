@@ -17,12 +17,13 @@ export default function Page({
 }: {
   params: Promise<{ userId: string }>;
 }) {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { userId } = use(params);
   const [user, setUser] = useState<User>();
 
   const fetchUser = () => {
     if (!userId) return;
-    fetch(`http://127.0.0.1:5000/user/get?user_id=${userId}`)
+    fetch(`${API_BASE_URL}/user/get?user_id=${userId}`)
       .then((response) => response.json())
       .then((data: User) => setUser(data))
       .catch((error) => console.error("Error fetching liked items:", error));

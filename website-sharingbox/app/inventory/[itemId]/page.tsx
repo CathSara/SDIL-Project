@@ -49,6 +49,7 @@ export default function ItemDetailPage({
 }: {
   params: Promise<{ itemId: string }>;
 }) {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { itemId } = use(params);
   const [itemDetail, setItemDetail] = useState<ItemDetail | null>(null);
   const [box, setBox] = useState<Box>();
@@ -66,7 +67,6 @@ export default function ItemDetailPage({
   const [descriptionEdit, setDescriptionEdit] = useState<string>();
   const [conditionEdit, setConditionEdit] = useState<string>();
   const [categories, setCategories] = useState<Category[]>([]);
-
   const conditions = ["new", "flawless", "used", "worn"]
 
   // Fetch item details
@@ -74,7 +74,7 @@ export default function ItemDetailPage({
     if (!itemId || itemIdRef.current === itemId) return;
 
     itemIdRef.current = itemId;
-    fetch(`http://127.0.0.1:5000/inventory/item?item_id=${itemId}`)
+    fetch(`${API_BASE_URL}/inventory/item?item_id=${itemId}`)
       .then((response) => response.json())
       .then((data) => {
         setItemDetail(data);
@@ -96,7 +96,7 @@ export default function ItemDetailPage({
       })
       .catch((error) => console.error("Error fetching item details:", error));
 
-      fetch("http://127.0.0.1:5000/inventory/categories")
+      fetch(`${API_BASE_URL}/inventory/categories`)
         .then((response) => response.json())
         .then((data: Category[]) => setCategories(data))
         .catch((error) => console.error("Error fetching categories:", error));
@@ -105,20 +105,18 @@ export default function ItemDetailPage({
   // Fetch details
   useEffect(() => {
     if (itemDetail?.box_id) {
-      fetch(`http://127.0.0.1:5000/inventory/box?box_id=${itemDetail.box_id}`)
+      fetch(`${API_BASE_URL}/inventory/box?box_id=${itemDetail.box_id}`)
         .then((response) => response.json())
         .then((data) => setBox(data))
         .catch((error) => console.error("Error fetching box details:", error));
     }
     if (itemDetail?.created_by_id) {
-      fetch(
-        `http://127.0.0.1:5000/user/get?user_id=${itemDetail?.created_by_id}`
-      )
+      fetch(`${API_BASE_URL}/user/get?user_id=${itemDetail?.created_by_id}`)
         .then((response) => response.json())
         .then((data) => setDonor(data))
         .catch((error) => console.error("Error fetching donor:", error));
     }
-    fetch(`http://127.0.0.1:5000/inventory/is_reserved?item_id=${itemId}`)
+    fetch(`${API_BASE_URL}/inventory/is_reserved?item_id=${itemId}`)
       .then((response) => response.json())
       .then((data) => {
         setIsReserved(data.reserved);
@@ -128,7 +126,7 @@ export default function ItemDetailPage({
       );
 
     fetch(
-      `http://127.0.0.1:5000/inventory/is_favorized?item_id=${itemId}&user_id=${userId}`
+      `${API_BASE_URL}/inventory/is_favorized?item_id=${itemId}&user_id=${userId}`
     )
       .then((response) => response.json())
       .then((data) => setIsFavorited(data.item_favorited))
@@ -140,7 +138,7 @@ export default function ItemDetailPage({
 
   const handleReserve = () => {
     fetch(
-      `http://127.0.0.1:5000/inventory/reserve?item_id=${itemId}&user_id=${userId}`,
+      `${API_BASE_URL}/inventory/reserve?item_id=${itemId}&user_id=${userId}`,
       {
         method: "POST",
       }
@@ -156,7 +154,7 @@ export default function ItemDetailPage({
 
   const handleUnreserve = () => {
     fetch(
-      `http://127.0.0.1:5000/inventory/unreserve?item_id=${itemId}&user_id=${userId}`,
+      `${API_BASE_URL}/inventory/unreserve?item_id=${itemId}&user_id=${userId}`,
       {
         method: "POST",
       }
@@ -169,7 +167,7 @@ export default function ItemDetailPage({
 
   const handleLike = () => {
     fetch(
-      `http://127.0.0.1:5000/inventory/favorize?item_id=${itemId}&user_id=${userId}`,
+      `${API_BASE_URL}/inventory/favorize?item_id=${itemId}&user_id=${userId}`,
       {
         method: "POST",
       }
@@ -181,7 +179,7 @@ export default function ItemDetailPage({
 
   const handleUnlike = () => {
     fetch(
-      `http://127.0.0.1:5000/inventory/defavorize?item_id=${itemId}&user_id=${userId}`,
+      `${API_BASE_URL}/inventory/defavorize?item_id=${itemId}&user_id=${userId}`,
       {
         method: "POST",
       }
@@ -217,16 +215,13 @@ export default function ItemDetailPage({
     console.log("payload:", payload)
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:5000/inventory/update",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/inventory/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       if (response.ok) {
         setItemDetail(await response.json())

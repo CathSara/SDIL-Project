@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 const RegistrationPage: React.FC = () => {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -44,7 +45,7 @@ const RegistrationPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/auth/register", {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         body: formData,
       });
@@ -85,7 +86,7 @@ const RegistrationPage: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/auth/confirm", {
+      const response = await fetch(`${API_BASE_URL}/auth/confirm`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

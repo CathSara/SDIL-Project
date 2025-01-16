@@ -36,6 +36,7 @@ interface User {
 }
 
 export default function Page() {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [items, setItems] = useState<Item[]>([]);
   const [user, setUser] = useState<User>();
   const [boxes, setBoxes] = useState<Box[]>([]);
@@ -51,13 +52,13 @@ export default function Page() {
     fetchItems();
 
     // Fetch boxes
-    fetch("http://127.0.0.1:5000/inventory/boxes")
+    fetch(`${API_BASE_URL}/inventory/boxes`)
       .then((response) => response.json())
       .then((data: Box[]) => setBoxes(data))
       .catch((error) => console.error("Error fetching boxes:", error));
 
     // Fetch categories
-    fetch("http://127.0.0.1:5000/inventory/categories")
+    fetch(`${API_BASE_URL}/inventory/categories`)
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
       .catch((error) => console.error("Error fetching categories:", error));
@@ -73,7 +74,7 @@ export default function Page() {
     if (selectedCategory) params.append("category", selectedCategory);
     if (selectedBox) params.append("box_id", selectedBox);
 
-    fetch(`http://127.0.0.1:5000/inventory/items?${params.toString()}`)
+    fetch(`${API_BASE_URL}/inventory/items?${params.toString()}`)
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
       .catch((error) => console.error("Error fetching items:", error));
@@ -97,7 +98,7 @@ export default function Page() {
 
   const fetchReservedItems = () => {
     if (!userId) return;
-    fetch(`http://127.0.0.1:5000/inventory/get_reserved?user_id=${userId}`)
+    fetch(`${API_BASE_URL}/inventory/get_reserved?user_id=${userId}`)
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
       .catch((error) => console.error("Error fetching reserved items:", error));
@@ -106,7 +107,7 @@ export default function Page() {
 
   const fetchLikedItems = () => {
     if (!userId) return;
-    fetch(`http://127.0.0.1:5000/inventory/get_favorites?user_id=${userId}`)
+    fetch(`${API_BASE_URL}/inventory/get_favorites?user_id=${userId}`)
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
       .catch((error) => console.error("Error fetching liked items:", error));
@@ -115,7 +116,7 @@ export default function Page() {
 
   const fetchUser = () => {
     if (!userId) return;
-    fetch(`http://127.0.0.1:5000/user/get?user_id=${userId}`)
+    fetch(`${API_BASE_URL}/user/get?user_id=${userId}`)
       .then((response) => response.json())
       .then((data: User) => setUser(data))
       .catch((error) => console.error("Error fetching liked items:", error));
