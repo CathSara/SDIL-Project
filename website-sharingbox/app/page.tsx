@@ -7,7 +7,7 @@ export default function Home() {
     <div className="min-h-screen bg-mint-green flex flex-col items-center justify-center">
 
       {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center">
+      <main className="flex-grow flex items-center justify-center mb-9">
         <div className="bg-white shadow-2x1 rounded-lg p-5 transform transition duration-500 hover:scale-105 max-w-lg w-full text-center mt-9 mx-2">
           <h2 className="text-dark-green font-bold text-3xl mb-8">Welcome to your Smart Giveaway Box</h2>
           <p className="text-gray-700 leading-relaxed mb-8 text-lg">

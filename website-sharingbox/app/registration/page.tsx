@@ -139,6 +139,7 @@ const RegistrationPage: React.FC = () => {
                     className="w-full px-6 py-3 border rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-dark-green"
                     placeholder="Enter the code"
                     onChange={(e) => setToken(e.target.value)}
+                    value={token}
                     required
                   />
                 </div>
