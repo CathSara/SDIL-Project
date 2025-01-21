@@ -45,6 +45,7 @@ export default function Page() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedBox, setSelectedBox] = useState("");
   const userId = getCookie("user_id");
+  const openedBoxId = getCookie("opened_box_id");
   const [viewName, setViewName] = useState("All Items");
 
   useEffect(() => {
@@ -74,6 +75,10 @@ export default function Page() {
     if (selectedCategory) params.append("category", selectedCategory);
     if (selectedBox) params.append("box_id", selectedBox);
 
+    if (openedBoxId) {
+      params.set("box_id", openedBoxId);
+    }
+
     fetch(`${API_BASE_URL}/inventory/items?${params.toString()}`)
       .then((response) => response.json())
       .then((data: Item[]) => setItems(data))
@@ -89,6 +94,9 @@ export default function Page() {
     if (selectedBox) {
       const box = boxes.find((box) => String(box.id) === selectedBox);
       viewName += " at " + box?.name;
+    }
+    if (openedBoxId) {
+      viewName = "Stored in this box";
     }
     if (viewName === "") {
       viewName = "All items";
@@ -141,64 +149,65 @@ export default function Page() {
     <div className="min-h-screen bg-mint-green flex flex-col items-center">
       {/* Header Section */}
       <Header></Header>
-      {/* Search Bar */}
-      <div className="w-full bg-mint-green white py-1 px-8 shadow-md flex justify-center">
-        <div className="sm:space-x-4 flex flex-col justify-center sm:flex-row sm:items-center w-full max-w-screen-lg">
-          {/* Search Input */}
-          <input
-            type="text"
-            placeholder="Search items..."
-            value={searchString}
-            onChange={(e) => setSearchString(e.target.value)}
-            className="w-full sm:w-auto px-4 py-2 border rounded-md mb-4 sm:mb-0"
-          />
+      {!openedBoxId && (
+        <div className="w-full bg-mint-green white py-1 px-8 shadow-md flex justify-center">
+          <div className="sm:space-x-4 flex flex-col justify-center sm:flex-row sm:items-center w-full max-w-screen-lg">
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search items..."
+              value={searchString}
+              onChange={(e) => setSearchString(e.target.value)}
+              className="w-full sm:w-auto px-4 py-2 border rounded-md mb-4 sm:mb-0"
+            />
 
-          {/* Category Dropdown */}
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full sm:w-auto bg-white px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
-          >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.name} value={category.name}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+            {/* Category Dropdown */}
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full sm:w-auto bg-white px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
+            >
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                <option key={category.name} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
 
-          {/* Box Dropdown */}
-          <select
-            value={selectedBox}
-            onChange={(e) => setSelectedBox(e.target.value)}
-            className="w-full sm:w-auto  bg-white px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
-          >
-            <option value="">All Boxes</option>
-            {boxes.map((box) => (
-              <option key={box.id} value={box.id}>
-                {box.name}
-              </option>
-            ))}
-          </select>
+            {/* Box Dropdown */}
+            <select
+              value={selectedBox}
+              onChange={(e) => setSelectedBox(e.target.value)}
+              className="w-full sm:w-auto  bg-white px-4 py-2.5 border rounded-md mb-4 sm:mb-0"
+            >
+              <option value="">All Boxes</option>
+              {boxes.map((box) => (
+                <option key={box.id} value={box.id}>
+                  {box.name}
+                </option>
+              ))}
+            </select>
 
-          {/* Search Button */}
-          <button
-            onClick={handleSearch}
-            className="w-full sm:w-auto px-6 py-2 bg-dark-green text-white font-bold rounded-md hover:bg-lighter-green mb-4 sm:mb-0"
-          >
-            Search
-          </button>
-          <div className="flex flex-row justify-center">
-            <ProfileMenu
-              onReservedClick={fetchReservedItems}
-              onLikedClick={fetchLikedItems}
-              name={user?.first_name || "Name"}
-              path={user?.profile_picture_path || "/profiles/default.png"} // fallback
-              id={userId || "0"}
-            ></ProfileMenu>
+            {/* Search Button */}
+            <button
+              onClick={handleSearch}
+              className="w-full sm:w-auto px-6 py-2 bg-dark-green text-white font-bold rounded-md hover:bg-lighter-green mb-4 sm:mb-0"
+            >
+              Search
+            </button>
+            <div className="flex flex-row justify-center">
+              <ProfileMenu
+                onReservedClick={fetchReservedItems}
+                onLikedClick={fetchLikedItems}
+                name={user?.first_name || "Name"}
+                path={user?.profile_picture_path || "/profiles/default.png"} // fallback
+                id={userId || "0"}
+              ></ProfileMenu>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="w-full px-8 py-2 flex items-center">
         <svg

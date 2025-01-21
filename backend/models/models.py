@@ -15,7 +15,7 @@ class Box(db.Model):
         nullable=True
     )  # Foreign key: The user who opened the box (optional)
     opened_by = db.relationship('User', foreign_keys=[opened_by_id], backref='boxes_opened')
-    opened_at = db.Column(db.DateTime, nullable=True, default=func.now())
+    opened_at = db.Column(db.DateTime, nullable=True)
 
     def to_dict(self):
         return {
