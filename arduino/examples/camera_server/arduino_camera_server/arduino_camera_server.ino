@@ -1,6 +1,8 @@
 // Main sketch for the ESP32-CAM board and camera.
 // This code is already loaded onto the camera and starts a webserver at the specified port.
 // A capture can then be taken by visiting the /capture path. Afterwards the image can be saved.
+// Playing around with the parameters results in different image sizes, resolutions, compression etc.
+
 // The only other relevant file in this folder is the arduino_secrets.h specifying the network credentials.
 // All other files are generated when compiling this sketch and do not need to be modified.
 
@@ -14,6 +16,7 @@
 
 const char *ssid = SECRET_SSID;
 const char *password = SECRET_PASS;
+const char *camera_server = "172.20.10.4";
 
 WiFiServer server(80);
 
