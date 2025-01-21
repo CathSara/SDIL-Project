@@ -11,6 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// DISCLAIMER: This code has been automatically generated when compiling the arduino_camera_server.ino sketch.
+// You do not need to modify this code.
 #include "esp_http_server.h"
 #include "esp_timer.h"
 #include "esp_camera.h"

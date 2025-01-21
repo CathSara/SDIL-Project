@@ -1,4 +1,11 @@
-//
+// Main sketch for the ESP32-CAM board and camera.
+// This code is already loaded onto the camera and starts a webserver at the specified port.
+// A capture can then be taken by visiting the /capture path. Afterwards the image can be saved.
+// The only other relevant file in this folder is the arduino_secrets.h specifying the network credentials.
+// All other files are generated when compiling this sketch and do not need to be modified.
+
+// Author: Tim Hebestreit
+
 #include "esp_camera.h"
 #include <WiFi.h>
 #define CAMERA_MODEL_AI_THINKER
@@ -31,7 +38,7 @@ void handleClient() {
 
   if (header.indexOf("GET /capture") >= 0) {
     controlFlash(true);
-    delay(100);
+    delay(200);
 
     camera_fb_t *fb = esp_camera_fb_get();
     if (!fb) {

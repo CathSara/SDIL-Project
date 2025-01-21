@@ -1,3 +1,5 @@
+// DISCLAIMER: This code has been automatically generated when compiling the arduino_camera_server.ino sketch.
+// You do not need to modify this code.
 
 //File: index_ov2640.html.gz, Size: 6578
 #define index_ov2640_html_gz_len 6578

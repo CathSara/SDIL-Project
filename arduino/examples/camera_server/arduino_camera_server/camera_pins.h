@@ -1,3 +1,5 @@
+// DISCLAIMER: This code has been automatically generated when compiling the arduino_camera_server.ino sketch.
+// You do not need to modify this code.
 
 #if defined(CAMERA_MODEL_WROVER_KIT)
 #define PWDN_GPIO_NUM  -1
