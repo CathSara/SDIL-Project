@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ProfileMenu from "../components/ProfileMenu";
+import ItemCard from "../components/ItemCard";
 
 interface Item {
   id: number;
@@ -235,38 +234,7 @@ export default function Page() {
             const box = boxes.find((box) => box.id === item.box_id);
 
             return (
-              <Link key={item.id} href={`/inventory/${item.id}`}>
-                <div className="bg-white shadow-lg rounded-lg p-6 transform transition duration-500 hover:scale-105 cursor-pointer">
-                  {String(item.reserved_by_id) == userId && (
-                    <div className="absolute top-0 rounded-t-lg left-0 w-full bg-dark-green text-white text-center py-2 font-bold z-50">
-                      Reserved by yourself
-                    </div>
-                  )}
-                  {String(item.reserved_by_id) != userId &&
-                    item.reserved_by_id && (
-                      <div className="absolute top-0 rounded-t-lg left-0 w-full bg-red-500 text-white text-center py-2 font-bold z-50">
-                        Reserved by someone else
-                      </div>
-                    )}
-                  <div className="w-full h-64 bg-gray-100 rounded-md mb-4 relative overflow-hidden">
-                    <Image
-                      src={item.image_path}
-                      alt={item.title}
-                      className="object-cover w-full h-full"
-                      width="300"
-                      height="300"
-                    />
-                  </div>
-                  <h2 className="text-gray-800 font-semibold text-xl mb-2">
-                    {item.title}
-                  </h2>
-                  {box && (
-                    <p className="text-gray-600 text-md">
-                      <strong>Located in:</strong> {box.name}
-                    </p>
-                  )}
-                </div>
-              </Link>
+              <ItemCard key={item.id} item={item} box={box} userId={userId} />
             );
           })
         ) : (

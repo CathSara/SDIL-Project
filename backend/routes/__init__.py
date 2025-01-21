@@ -1,13 +1,14 @@
 from flask import Blueprint, jsonify, request
-from ..models.database_service import get_all_boxes, get_all_users, get_items
+from ..models.database_service import get_all_boxes, get_all_users, get_items, update_item_state
 
 main = Blueprint('main', __name__)
 
-from . import auth, inventory, user
+from . import auth, inventory, user, box
 
 main.register_blueprint(auth.auth_bp, url_prefix='/auth')
 main.register_blueprint(inventory.inventory_bp, url_prefix='/inventory')
 main.register_blueprint(user.user_pb, url_prefix='/user')
+main.register_blueprint(box.box_pb, url_prefix='/box')
 
 
 @main.route('/test/items', methods=['GET'])
@@ -38,3 +39,12 @@ def get_boxes_list():
 @main.route('/test/hi', methods=['GET'])
 def say_hi():
     return jsonify({'message': 'It works'}), 200
+
+
+@main.route('/test/item_status', methods=['GET'])
+def item_status():
+    item_id = request.args.get("item_id", None)
+    state = request.args.get("state", None)
+    
+    item = update_item_state(item_id, state)
+    return jsonify(item.to_detail_dict())

@@ -21,8 +21,6 @@ interface ItemDetail {
   created_at: string;
   reserved_by_id: number | null;
   reserved_until: string | null;
-  taken_by_id: number | null;
-  taken_at: string | null;
 }
 
 interface User {

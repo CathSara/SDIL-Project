@@ -30,6 +30,13 @@ def get_box_by_id(box_id):
     return Box.query.get(box_id)
 
 
+def set_box_open_closed(box_id, open):
+    box = get_box_by_id(box_id)
+    box.open = open
+    db.session.commit()
+    return box
+
+
 ##### USER #####
 
 def create_user(phone_number, first_name, last_name, password_raw, profile_picture_path):
@@ -108,15 +115,13 @@ def create_item(image_path, category, title, description, condition, weight, box
     return item
 
 
-def update_item_as_taken(item_id, taken_by_user_id):
+def update_item_state(item_id, state):
     """
-    Mark a specified item as taken.
+    Mark a specified item with a new state.
     """
     item = Item.query.get(item_id)
     if item:
-        current_time = datetime.now(timezone.utc)
-        item.taken_by_id = taken_by_user_id
-        item.taken_at = current_time
+        item.item_state = state
         db.session.commit()
         return item
     return None
