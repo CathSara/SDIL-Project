@@ -22,12 +22,18 @@ interface Item {
   condition: string;
   box_id: number;
   reserved_by_id: number;
+  item_state: string;
 }
 
 export default function ItemCard({ item, box, userId }: ItemCardProps) {
   return (
     <Link key={item.id} href={`/inventory/${item.id}`}>
       <div className="bg-white shadow-lg rounded-lg p-6 transform transition duration-500 hover:scale-105 cursor-pointer">
+        {String(item.item_state) === "scanned" && (
+          <div className="absolute top-0 rounded-t-lg left-0 w-full bg-red-500 text-white text-center py-2 font-bold z-50">
+            Please put the item into the storage compartment
+          </div>
+        )}
         {String(item.reserved_by_id) === userId && (
           <div className="absolute top-0 rounded-t-lg left-0 w-full bg-dark-green text-white text-center py-2 font-bold z-50">
             Reserved by yourself

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from backend.services import open_box
+from backend.services import open_box, resolve_conflict
 from ..models.database_service import add_favorite, get_all_boxes, get_box_by_id, get_items, get_item_by_id, get_reserved_items, get_user_favorites, is_item_favorited, is_item_reserved, remove_favorite, update_item_as_reserved, update_item_as_unreserved, update_item
 
 inventory_bp = Blueprint('inventory', __name__)
@@ -203,3 +203,15 @@ def get_categories():
     ]
 
     return jsonify(categories_data), 200
+
+
+@inventory_bp.route('/resolve_conflict', methods=['POST'])
+def resolve_conflicting_items():
+    item_id = request.args.get("item_id", None)
+    confusion_source = request.args.get("confusion_source", None)
+
+    item = resolve_conflict(item_id, confusion_source)
+    if item:
+        return jsonify({'message': 'Item state is now clear'}), 200
+    else:
+        return jsonify({'message': 'Item state is still unclear'}), 403

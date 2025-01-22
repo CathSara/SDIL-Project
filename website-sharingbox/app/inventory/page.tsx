@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ProfileMenu from "../components/ProfileMenu";
 import ItemCard from "../components/ItemCard";
+import io from "socket.io-client";
 
 interface Item {
   id: number;
@@ -15,6 +16,7 @@ interface Item {
   condition: string;
   box_id: number;
   reserved_by_id: number;
+  item_state: string;
 }
 
 interface Box {
@@ -64,6 +66,18 @@ export default function Page() {
       .catch((error) => console.error("Error fetching categories:", error));
 
     fetchUser();
+
+    // Connect to the WebSocket server (Flask-SocketIO)
+    const socket = io(`${API_BASE_URL}`);
+
+    socket.on("item_update", () => {
+      fetchItems();
+      console.log("item update received")
+    });
+
+    return () => {
+      socket.disconnect();
+    };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -208,6 +222,63 @@ export default function Page() {
         </div>
       )}
 
+      {openedBoxId && (
+        <>
+          <div className="w-full px-8 py-2 flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m8.25 4.5 7.5 7.5-7.5 7.5"
+              />
+            </svg>
+
+            <h1 className="text-2xl text-gray-700">Picked Items</h1>
+          </div>
+
+          {/* Main Content */}
+          <main className="flex-grow container mx-auto px-8 pb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {items.length > 0 ? (
+              (() => {
+                const pickedItems = items.filter(
+                  (item) => item.item_state === "picked"
+                );
+
+                return pickedItems.length > 0 ? (
+                  pickedItems.map((item) => {
+                    const box = boxes.find((box) => box.id === item.box_id);
+
+                    return (
+                      <ItemCard
+                        key={item.id}
+                        item={item}
+                        box={box}
+                        userId={userId}
+                      />
+                    );
+                  })
+                ) : (
+                  <p className="text-dark-green text-center text-xl">
+                    You currently have not picked any item.
+                  </p>
+                );
+              })()
+            ) : (
+              <p className="text-dark-green text-center text-xl">
+                You currently have not picked any item.
+              </p>
+            )}
+          </main>
+        </>
+      )}
+
       <div className="w-full px-8 py-2 flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -230,13 +301,15 @@ export default function Page() {
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-8 pb-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.length > 0 ? (
-          items.map((item) => {
-            const box = boxes.find((box) => box.id === item.box_id);
+          items
+            .filter((item) => item.item_state === "stored") // Filter items with state "stored"
+            .map((item) => {
+              const box = boxes.find((box) => box.id === item.box_id);
 
-            return (
-              <ItemCard key={item.id} item={item} box={box} userId={userId} />
-            );
-          })
+              return (
+                <ItemCard key={item.id} item={item} box={box} userId={userId} />
+              );
+            })
         ) : (
           <p className="text-dark-green text-center text-xl">No items found.</p>
         )}

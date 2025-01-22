@@ -4,6 +4,8 @@ from backend.models.models import User, Item, Box, Favorite
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, timezone
 
+from backend.services import notify_frontend
+
 ##### BOX #####
 
 def create_box(name, location, box_picture_path, maps_link):
@@ -123,6 +125,7 @@ def update_item_state(item_id, state):
     if item:
         item.item_state = state
         db.session.commit()
+        notify_frontend(state)
         return item
     return None
 

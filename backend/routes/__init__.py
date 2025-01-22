@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+
+from backend.services import register_storage_weight_change
 from ..models.database_service import get_all_boxes, get_all_users, get_items, update_item_state
 
 main = Blueprint('main', __name__)
@@ -48,3 +50,17 @@ def item_status():
     
     item = update_item_state(item_id, state)
     return jsonify(item.to_detail_dict())
+
+
+@main.route('/test/weight_change', methods=['GET'])
+def test_weight_change():
+    box_id = request.args.get("box_id", None)
+    weight_change = request.args.get("weight_change", None)
+    
+    items = register_storage_weight_change(box_id, weight_change)
+    
+    if items:
+        items_data = [item.to_detail_dict() for item in items]
+        return jsonify(items_data)
+    else:
+        return jsonify({"message": "No item in this weight range"})
