@@ -5,14 +5,14 @@ from PIL import Image
 
 # Konfiguration für die Kamera und den Speicherpfad
 CAMERA_URL = "http://172.20.10.4/capture"
-SAVE_DIRECTORY = os.path.join(os.getcwd(), 'images')
+SAVE_DIRECTORY = os.path.join(os.getcwd(), "website-sharingbox", "public", "uploads")
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
 def allowed_file(filename):
     """Prüfen, ob die Datei eine erlaubte Bilddatei ist."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def capture_and_save_image():
+def capture_image():
     """Bild von der Kamera abrufen und speichern."""
     try:
         # Bild von der Kamera abrufen
@@ -35,7 +35,7 @@ def capture_and_save_image():
         img = img.resize((256, 256))  # Bildgröße anpassen
         img.save(filepath)
 
-        return jsonify({"message": "Bild erfolgreich aufgenommen", "path": f"/images/{filename}"}), 200
+        return jsonify({"message": "Bild erfolgreich aufgenommen", "path": f"/uploads/{filename}"}), 200
 
     except requests.exceptions.RequestException as e:
         return jsonify({"message": f"Fehler beim Abrufen des Bildes: {e}"}), 500
