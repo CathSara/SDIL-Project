@@ -68,7 +68,7 @@ export default function Page() {
     fetchUser();
 
     // Connect to the WebSocket server (Flask-SocketIO)
-    const socket = io("http://127.0.0.1:5000");
+    const socket = io(`${API_BASE_URL}`);
 
     socket.on("item_update", () => {
       fetchItems();

@@ -21,22 +21,38 @@ def close_box(box_id):
     # notify frontend that box has been closed
 
 
-def notify_frontend(item_status):
+def notify_frontend(item_status, message='item_update'):
     from . import socketio
-    socketio.emit('item_update', {'status': item_status})
+    socketio.emit(message, {'data': item_status})
+    
+    
+def resolve_conflict(item_id, confusion_source):
+    from backend.models.database_service import get_item_by_id, update_item_state
+    item = get_item_by_id(item_id)
+    update_item_state(item.id, confusion_source)
+    notify_frontend(confusion_source)
+    return item
     
     
 def register_storage_weight_change(box_id, weight_change):
     from backend.models.database_service import update_item_state
     weight_change = int(weight_change)
+    state = "stored" if weight_change > 0 else "picked"
     items = determine_item(box_id, weight_change)
+    if len(items) == 0:
+        pass # TODO if positive, notify that there was an item added which is unknown
     if len(items) == 1:
         item = items[0]
-        state = "stored" if weight_change > 0 else "picked"
         update_item_state(item.id, state)
         notify_frontend(state)
         return items
     else: # handle multiple items in question
+        notify_frontend({
+            'status': 'confused',
+            'box_id': box_id,
+            'confusion_source': state,
+            'items': [{'id': item.id, 'title': item.title, 'description': item.description, 'image_path': item.image_path} for item in items]
+        }, "confused")
         print("the box with boxId", box_id, "is confused")
         return items
 
