@@ -12,7 +12,7 @@ def allowed_file(filename):
     """Prüfen, ob die Datei eine erlaubte Bilddatei ist."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def capture_image():
+def capture_and_save_image():
     """Bild von der Kamera abrufen und speichern."""
     try:
         # Bild von der Kamera abrufen
