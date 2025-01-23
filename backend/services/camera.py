@@ -18,6 +18,8 @@ import requests
 from PIL import Image
 from datetime import datetime
 from dotenv import load_dotenv
+from io import BytesIO
+from PIL import Image
 
 CAMERA_URL = "http://172.20.10.4/capture"
 SAVE_DIRECTORY = os.path.join(os.getcwd(), "website-sharingbox", "public", "uploads")
@@ -35,7 +37,7 @@ def capture_image_for_item(item_id):
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  #Format: yyyymmdd_hhmmss
         #filename = "captured_image_" + timestamp + filename.rsplit('.', 1)[1].lower()
-        filename = f"{item_id}.jpg"
+        filename = f"{item_id}.png"
 
         filepath = os.path.join(SAVE_DIRECTORY, filename)
 
@@ -50,13 +52,53 @@ def capture_image_for_item(item_id):
         if filepath:
           print("Bild erfolgreich aufgenommen unter Pfad: " + str(filepath))
           item = update_item(item_id, image_path="/uploads/"+filename)
-          encode_image(item.id, item.image_path)
+          edit_image(item.id, item.image_path)
         else:
           return jsonify({"message": "Fehler beim Aufnehmen des Bildes"}), 500
-    
 
     except requests.exceptions.RequestException as e:
         return jsonify({"message": f"Fehler beim Abrufen des Bildes: {e}"}), 500
+    
+def edit_image(item_id, item_image_path):
+    file_path = os.getcwd() + "/website-sharingbox/public/" + item_image_path
+    file_path = file_path.replace("\\","/")
+    with open(file_path, "rb") as image_file:
+        image = Image.open(image_file)
+        if image.mode != "RGBA":  # Ensure the image is in the correct format
+            image = image.convert("RGBA")
+        
+        # Save the image to a BytesIO object
+        image_data = BytesIO()
+        image.save(image_data, format="PNG")
+        image_data.seek(0)  # Rewind the buffer to the beginning
+
+    load_dotenv()
+    api_key = os.getenv("OPENAI_API_KEY")
+    headers = {"Authorization": f"Bearer {api_key}"}
+    url = "https://api.openai.com/v1/images/edits"
+
+    files = {
+        "image": ("input_image.png", image_data, "image/png"),
+        "prompt": (None, "Please edit the image in such a way that you zoom to the image lying on the white shelf in the foreground of the image, so that the object is clearly visible and centered in the image. Everything in the baclkground, and people that might be in the picture should be not visible, or if they are visible because otherwise the full object might not be displayed, they should be blurred slightly."),
+        "n": (None, "1"),
+        "size": (None, "512x512"),
+    }
+    response = requests.post(url, headers=headers, files=files)
+
+
+    if response.status_code == 200:
+      print("Bild erfolgreich angepasst.")
+      output_image_url = response.json()["data"][0]["url"]
+      output_image_response = requests.get(output_image_url)
+      os.makedirs(SAVE_DIRECTORY, exist_ok=True)
+      with open(file_path, "wb") as file:
+          file.write(output_image_response.content)  # Use .content to write the binary data
+      filename = f"{item_id}.png"
+      item = update_item(item_id, image_path="/uploads/" + filename)
+      encode_image(item.id, item.image_path)
+    else:
+      print("Error:", response.json())
+      raise Exception(f"Image editing failed: {response.status_code} {response.text}")
 
 def encode_image(item_id, item_image_path):
     """
@@ -97,7 +139,6 @@ def analyze_image(item_id, base64_image):
 
   load_dotenv()
   client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-  print(client.api_key)
   response = client.chat.completions.create(
     model="gpt-4o-mini", # Future outlook: Could use better performing, but more costly models
     messages=[
