@@ -17,7 +17,7 @@ from dotenv import load_dotenv # type: ignore
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-def encode_image(image_name):
+def encode_image(image_path):
     """
     Encodes an image to a Base64 string (needed for local images).
 
@@ -32,7 +32,7 @@ def encode_image(image_name):
     """
 
     # Construct absolute path to make it work
-    file_path = os.getcwd() + "/website-sharingbox/public/uploads/" + image_name
+    file_path = os.getcwd() + "/website-sharingbox/public/uploads/" + image_path
     file_path = file_path.replace("\\","/")
 
     # Encode image file to Base64 string
