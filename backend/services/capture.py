@@ -18,9 +18,10 @@ def capture_and_save_image():
         response = requests.get(CAMERA_URL, timeout=10)
         response.raise_for_status()
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  # Format: YYYYMMDD_HHMMSS
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  #Format: yyyymmdd_hhmmss
         #filename = "captured_image_" + timestamp + filename.rsplit('.', 1)[1].lower()
-        filename = f"captured_image_{timestamp}.jpg"
+        #filename = f"captured_image_{timestamp}.jpg" #HIER AUSKOMMENTIEREN NACH OPENAI TESTING
+        filename = "testbild.jpg" #HIER WEG NACH OPENAI TESTING
 
         filepath = os.path.join(SAVE_DIRECTORY, filename)
 
