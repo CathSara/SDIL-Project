@@ -56,7 +56,7 @@ def update():
 
     print("update called with item id:", item_id)
 
-    item = update_item(item_id, title, description, category, condition)
+    item = update_item(item_id, title=title, description=description, category=category, condition=condition)
 
     if item == "item_error":
         return jsonify({'message': 'Item not found'}), 404

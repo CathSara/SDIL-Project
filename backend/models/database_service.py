@@ -157,7 +157,7 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     return "success"
 
 
-def update_item(item_id, title, description, category, condition):
+def update_item(item_id, title=None, description=None, category=None, condition=None, image_path=None, item_state=None):
     item = Item.query.get(item_id)
     check_and_update_reservation(item)
     if not item:
@@ -171,6 +171,10 @@ def update_item(item_id, title, description, category, condition):
         item.category = category
     if condition:
         item.condition = condition
+    if image_path:
+        item.image_path = image_path
+    if item_state:
+        item.item_state = item_state
     db.session.commit()
     return item
 
