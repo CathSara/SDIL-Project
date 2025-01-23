@@ -27,22 +27,12 @@ def notify_box_open():
     return jsonify({'message': 'Notified backend that box has been opened.'}), 200
 
 
-@box_pb.route("/capture", methods=["GET"]) #Aktuell unused, wird ausgelagert
+@box_pb.route("/capture", methods=["GET"]) 
+# Used for testing the capture functionality
+#Can be removed when capture_image_for_item is called in register_scanning_weight_change crrectly
 def capture_image():
-    #image_path = capture_image_for_item()
-    #if image_path:
-    #    print("Bild erfolgreich aufgenommen unter Pfad: " + str(image_path))
-    #else:
-    #    return jsonify({"message": "Fehler beim Aufnehmen des Bildes"}), 500
-    #print("test base64")
-    #base_64_image = encode_image(image_path)
-    #if base_64_image:
-    #    print("Bild erfolgreich enkodiert")
-    #    #print("Bild erfolgreich enkodiert, Bild:" + str(base_64_image))
-    #else:
-    #    return jsonify({"message": "Fehler beim Enkodieren des Bildes"}), 500
-    #item = create_item(image_path=None, category=None, title=None, description=None, condition=None, weight=None, box=1, created_by=None, item_state="created")
     capture_image_for_item(1) #Snoopy Tasse
+    return jsonify({'message': 'Image and info have been added.'}), 200
 
 # storage weight change
 

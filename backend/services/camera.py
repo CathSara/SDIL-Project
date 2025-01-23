@@ -44,7 +44,7 @@ def capture_image_for_item(item_id):
             file.write(response.content)
 
         img = Image.open(filepath)
-        img = img.resize((800, 600))
+        img = img.resize((1600, 1200))
         img.save(filepath)
 
         if filepath:
@@ -116,11 +116,6 @@ def analyze_image(item_id, base64_image):
     max_tokens=300,
   )
   content = response.choices[0].message.content
-  print(content)
-
-  
-
-  # Initialize the dictionary and extract the relevant information from the response of OpenAI (which should have the given format from the prompt message)
   result = {
         "object_type": None,
         "category": None,
@@ -142,6 +137,12 @@ def analyze_image(item_id, base64_image):
           result["condition"] = line.split("Condition:")[1].strip()
 
   print(result)
+  # allow object
+  if allow_object(result) == True:
+    item = update_item(item_id, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"])
+    print(item)
+  else:
+    print("Not allowed")
 
 def allow_object(result):
   """
@@ -160,26 +161,6 @@ def allow_object(result):
 
   # Allows object if it is not in poor condition and not recognized as "no material good" (which includes food items)
   if object_type not in ["no material good"] and condition not in ["poor"]:
-        return True
+    return True
   else:
     return False
-
-def handle_item(image_path, weight, box, created_by):
-  """
-  Handles the item (object) by adding it to the database if it is allowed or reject it otherwise.
-
-  Args:
-    image path (str): Relative path to the image
-    weight (float): Weight of the object (given by weight sensors)
-    box (str): Box ID where the item is put in
-    created_by (str): User who puts the item in 
-  """
-
-  analysis_result = analyze_image(image_path)
-  is_allowed = allow_object(analysis_result)
-
-  if is_allowed:
-        create_item(image_path, analysis_result["category"], analysis_result["title"], analysis_result["description"], analysis_result["condition"], weight, box, created_by)
-        print(f"Item '{analysis_result['title']}' added to the database.")
-  else:
-        print(f"Item '{analysis_result['title']}' is not allowed.")
