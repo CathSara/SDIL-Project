@@ -20,12 +20,14 @@ def notify_box_closed():
 def capture_image():
     image_path = capture_and_save_image()
     if image_path:
-        print(jsonify({"message": "Bild erfolgreich aufgenommen", "path": image_path}), 200)
+        print("Bild erfolgreich aufgenommen unter Pfad: " + str(image_path))
     else:
         return jsonify({"message": "Fehler beim Aufnehmen des Bildes"}), 500
+    print("test base64")
     base_64_image = encode_image(image_path)
     if base_64_image:
-        return jsonify({"message": "Bild erfolgreich aufgenommen", "path": base_64_image}), 200
+        print("Bild erfolgreich enkodiert")
+        #print("Bild erfolgreich enkodiert, Bild:" + str(base_64_image))
     else:
         return jsonify({"message": "Fehler beim Enkodieren des Bildes"}), 500
 
