@@ -58,6 +58,8 @@ def register_scanning_weight_change(box_id, weight_change):
     if weight_change > 0:
         from backend.models.database_service import create_item
         item = create_item("no_path", "no_category", "no_title", "no_description", "no_condition", weight_change, box, created_by, item_state="created")
+        from backend.services.camera import capture_image_for_item
+        capture_image_for_item(item.id)
         
     
     
