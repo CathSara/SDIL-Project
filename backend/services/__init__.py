@@ -52,10 +52,13 @@ def resolve_conflict(item_id, confusion_source):
 
 
 def register_scanning_weight_change(box_id, weight_change):
+    from backend.models.database_service import get_box_by_id, get_user_by_id
+    box = get_box_by_id(box_id)
+    created_by = get_user_by_id(box.opened_by_id)
     if weight_change > 0:
         from backend.models.database_service import create_item
-        pass
-        #create_item(image_path, category, title, description, condition, weight, box, created_by)
+        item = create_item("no_path", "no_category", "no_title", "no_description", "no_condition", weight_change, box, created_by, item_state="created")
+        
     
     
 def register_storage_weight_change(box_id, weight_change):

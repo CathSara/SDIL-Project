@@ -98,7 +98,7 @@ def get_user_by_id(user_id):
 
 ##### ITEM #####
 
-def create_item(image_path, category, title, description, condition, weight, box, created_by):
+def create_item(image_path, category, title, description, condition, weight, box, created_by, item_state="stored"):
     """
     Add a new item to a box.
     """
@@ -112,7 +112,8 @@ def create_item(image_path, category, title, description, condition, weight, box
         weight=weight,
         box=box,
         created_by=created_by,
-        created_at=current_time
+        created_at=current_time,
+        item_state=item_state
     )
     db.session.add(item)
     db.session.commit()
