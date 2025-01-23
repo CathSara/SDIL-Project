@@ -183,7 +183,7 @@ def get_box():
         return jsonify({'message': 'No box found'}), 404
     
 
-@inventory_bp.route('/open', methods=['GET'])
+@inventory_bp.route('/open', methods=['POST'])
 def open_box_request():
     box_id = request.args.get("box_id", None)
     open_box(box_id)

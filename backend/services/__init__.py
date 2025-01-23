@@ -12,6 +12,7 @@ def open_box(box_id):
     from backend.models.database_service import set_box_open_closed
     set_box_open_closed(box_id, True)
     # TODO notify arduino to open box
+    print("box with id", box_id, "has been opened")
 
 
 def close_box(box_id):

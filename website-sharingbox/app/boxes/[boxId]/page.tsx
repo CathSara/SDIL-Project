@@ -49,7 +49,11 @@ export default function Page({
 
   const openBox = () => {
     document.cookie = `opened_box_id=${boxId}; path=/;`;
-    // TODO: POST to API
+    fetch(`${API_BASE_URL}/inventory/open?box_id=${boxId}`, {
+      method: "POST",
+    })
+      .then((response) => response.json())
+      .catch((error) => console.error("Error opening box:", error));
     router.push("/inventory");
   };
 
