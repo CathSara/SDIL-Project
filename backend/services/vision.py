@@ -11,11 +11,11 @@ import openai # type: ignore
 import base64
 import os
 from ..models.database_service import create_item
-from dotenv import load_dotenv # type: ignore
+#from dotenv import load_dotenv # type: ignore
 
 # Get the OpenAI API key from the .env file
-load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
+#load_dotenv()
+#openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def encode_image(image_path):
     """
