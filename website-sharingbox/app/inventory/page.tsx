@@ -75,6 +75,10 @@ export default function Page() {
       console.log("item update received")
     });
 
+    socket.on("close", () => {
+      fetchItems();
+    });
+
     return () => {
       socket.disconnect();
     };
