@@ -7,11 +7,21 @@ min_precision = 5 # +/- 5 miligrams accuracy
 def init_services(socketio_instance):
     global socketio
     socketio = socketio_instance
+    
 
-def open_box(box_id):
+def open_box(box_id, user_id):
     from backend.models.database_service import set_box_open_closed
-    set_box_open_closed(box_id, True)
-    # TODO notify arduino to open box
+    set_box_open_closed(box_id, user_id, False)
+    print("box with id", box_id, "has been notified to be opened")
+    # TODO send open box request to arduino
+        
+
+def confirm_box_open(box_id):
+    from backend.models.database_service import set_box_open_closed
+    set_box_open_closed(box_id, None, True)
+    notify_frontend({
+        'box_id': box_id,
+    }, "open")
     print("box with id", box_id, "has been opened")
 
 
@@ -33,6 +43,13 @@ def resolve_conflict(item_id, confusion_source):
     update_item_state(item.id, confusion_source)
     notify_frontend(confusion_source)
     return item
+
+
+def register_scanning_weight_change(box_id, weight_change):
+    if weight_change > 0:
+        from backend.models.database_service import create_item
+        pass
+        #create_item(image_path, category, title, description, condition, weight, box, created_by)
     
     
 def register_storage_weight_change(box_id, weight_change):

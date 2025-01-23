@@ -32,9 +32,11 @@ def get_box_by_id(box_id):
     return Box.query.get(box_id)
 
 
-def set_box_open_closed(box_id, open):
+def set_box_open_closed(box_id, user_id=None, open=False):
     box = get_box_by_id(box_id)
-    box.open = open
+    box.opened = open
+    if user_id:
+        box.opened_by_id = user_id
     db.session.commit()
     return box
 

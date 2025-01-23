@@ -4,7 +4,6 @@ import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import LoginForm from "@/app/components/LoginForm";
 import React, { use, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 interface Box {
   box_picture_path: string;
@@ -21,7 +20,6 @@ export default function Page({
 }: {
   params: Promise<{ boxId: string }>;
 }) {
-  const router = useRouter();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { boxId } = use(params);
   const [userId, setUserId] = useState("");
@@ -48,13 +46,11 @@ export default function Page({
   };
 
   const openBox = () => {
-    document.cookie = `opened_box_id=${boxId}; path=/;`;
-    fetch(`${API_BASE_URL}/inventory/open?box_id=${boxId}`, {
+    fetch(`${API_BASE_URL}/inventory/open?box_id=${boxId}&user_id=${userId}`, {
       method: "POST",
     })
       .then((response) => response.json())
       .catch((error) => console.error("Error opening box:", error));
-    router.push("/inventory");
   };
 
   function getCookie(name: string) {
