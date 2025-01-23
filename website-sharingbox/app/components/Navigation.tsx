@@ -17,17 +17,16 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="w-full bg-blue-600 text-white shadow-md">
+    <nav className="w-full bg-mint-green text-dark-green shadow-md">
       <div className="text-2xl font-bold container mx-auto px-4 py-4 flex justify-center space-x-6">
         {navLinks.map((link) => (
           <Link
             key={link.href}
             href={link.href}
-            className={`px-4 py-2 rounded-md font-semibold transition ${
-              pathname === link.href
-                ? "bg-purple-500 shadow-lg"
-                : "hover:bg-blue-500"
-            }`}
+            className={`px-4 py-2 rounded-md font-semibold transition ${pathname === link.href
+              ? "bg-dark-green shadow-lg text-white"
+              : "hover:bg-lighter-green hover:text-white"
+              }`}
           >
             {link.label}
           </Link>
