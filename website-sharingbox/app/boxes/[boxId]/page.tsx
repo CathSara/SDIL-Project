@@ -24,6 +24,7 @@ export default function Page({
   const { boxId } = use(params);
   const [userId, setUserId] = useState("");
   const [box, setBox] = useState<Box>();
+  const [pendingOpenRequest, setPendingOpenRequest] = useState<boolean>(false);
 
   const handleLoginSuccess = (status: boolean) => {
     if (status) {
@@ -50,6 +51,7 @@ export default function Page({
       method: "POST",
     })
       .then((response) => response.json())
+      .then(() => setPendingOpenRequest(true))
       .catch((error) => console.error("Error opening box:", error));
   };
 
@@ -81,19 +83,31 @@ export default function Page({
                     Please wait until the other user is done and closed the box.
                   </p>
                 ) : (
-                  <div>
-                    <p className="text-center">
-                      You are about to open the <strong>{box?.name}</strong>.
-                    </p>
-                    <div className="flex justify-center">
-                      <button
-                        onClick={openBox}
-                        className="px-20 bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green mt-5"
-                      >
-                        Open Box
-                      </button>
-                    </div>
-                  </div>
+                  <>
+                    {pendingOpenRequest == false ? (
+                      <div>
+                        <p className="text-center">
+                          You are about to unlock the{" "}
+                          <strong>{box?.name}</strong>.
+                        </p>
+                        <div className="flex justify-center">
+                          <button
+                            onClick={openBox}
+                            className="px-20 bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green mt-5"
+                          >
+                            Unlock
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <strong>The door is unlocked, please open it.</strong>
+                        <p className="mt-3">
+                          Otherwise, the door will lock after 15 seconds.
+                        </p>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ) : (
