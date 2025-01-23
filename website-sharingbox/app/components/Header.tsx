@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import ConfusionModal from "./ConfusionModal";
 import { useRouter } from "next/navigation";
+import ScanModal from "./ScanModal";
 
 const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL);
 
@@ -54,7 +55,7 @@ export default function Header() {
       const openedBoxId = data.data.box_id;
       const openedBoxIdCookie = getCookie("opened_box_id");
       if (openedBoxId == openedBoxIdCookie) {
-        console.log("the opened_box_id cookie should now be deleted")
+        console.log("the opened_box_id cookie should now be deleted");
         document.cookie =
           "opened_box_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
         router.push("/inventory");
@@ -66,7 +67,7 @@ export default function Header() {
       socket.off("open");
       socket.off("close");
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleItemSelect(itemId: number | null) {
@@ -122,6 +123,16 @@ export default function Header() {
         items={confusionItems}
         onItemSelect={handleItemSelect}
         confusion_source={confusionSource}
+      />
+
+      <ScanModal
+        isOpen={false}
+        id={1}
+        image_path={"/uploads/mug.jpg"}
+        category={"Dishes"}
+        title={"Snoopy"}
+        description={"Snoopy Mug"}
+        condition={"flawless"}
       />
     </>
   );
