@@ -66,6 +66,7 @@ export default function Header() {
       socket.off("open");
       socket.off("close");
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleItemSelect(itemId: number | null) {
