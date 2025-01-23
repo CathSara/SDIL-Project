@@ -32,9 +32,11 @@ def get_box_by_id(box_id):
     return Box.query.get(box_id)
 
 
-def set_box_open_closed(box_id, open):
+def set_box_open_closed(box_id, user_id=None, open=False):
     box = get_box_by_id(box_id)
-    box.open = open
+    box.opened = open
+    if user_id:
+        box.opened_by_id = user_id
     db.session.commit()
     return box
 
@@ -96,7 +98,7 @@ def get_user_by_id(user_id):
 
 ##### ITEM #####
 
-def create_item(image_path, category, title, description, condition, weight, box, created_by):
+def create_item(image_path, category, title, description, condition, weight, box, created_by, item_state="stored"):
     """
     Add a new item to a box.
     """
@@ -110,7 +112,8 @@ def create_item(image_path, category, title, description, condition, weight, box
         weight=weight,
         box=box,
         created_by=created_by,
-        created_at=current_time
+        created_at=current_time,
+        item_state=item_state
     )
     db.session.add(item)
     db.session.commit()

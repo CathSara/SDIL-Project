@@ -11,6 +11,14 @@ class Box(db.Model):
     maps_link = db.Column(db.String(255), nullable=True)
     opened = db.Column(db.Boolean, default=False)
 
+    # Foreign key to reference the user who opened the box
+    opened_by_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', name='fk_boxes_opened_by_id'),
+        nullable=True
+    )
+    opened_by = db.relationship('User', backref='opened_boxes', foreign_keys=[opened_by_id])
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -19,6 +27,7 @@ class Box(db.Model):
             "box_picture_path": self.box_picture_path,
             "maps_link": self.maps_link,
             "opened": self.opened,
+            "opened_by_id": self.opened_by_id,
         }
 
 

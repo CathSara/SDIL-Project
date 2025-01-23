@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import ConfusionModal from "./ConfusionModal";
+import { useRouter } from "next/navigation";
 
 const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL);
 
 export default function Header() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confusionItems, setConfusionItems] = useState([]);
   const [confusionSource, setConfusionSource] = useState("");
@@ -37,8 +39,32 @@ export default function Header() {
       }
     }
 
+    socket.on("open", (data) => {
+      console.log("box has been opened");
+      const openedBoxId = data.data.box_id;
+      const openedBoxUserId = data.data.user_id;
+      if (openedBoxUserId == userId) {
+        document.cookie = `opened_box_id=${openedBoxId}; path=/;`;
+        router.push("/inventory");
+      }
+    });
+
+    socket.on("close", (data) => {
+      console.log("box has been opened");
+      const openedBoxId = data.data.box_id;
+      const openedBoxIdCookie = getCookie("opened_box_id");
+      if (openedBoxId == openedBoxIdCookie) {
+        console.log("the opened_box_id cookie should now be deleted")
+        document.cookie =
+          "opened_box_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        router.push("/inventory");
+      }
+    });
+
     return () => {
       socket.off("confused");
+      socket.off("open");
+      socket.off("close");
     };
   }, []);
 

@@ -7,11 +7,23 @@ min_precision = 5 # +/- 5 miligrams accuracy
 def init_services(socketio_instance):
     global socketio
     socketio = socketio_instance
+    
 
-def open_box(box_id):
+def open_box(box_id, user_id):
     from backend.models.database_service import set_box_open_closed
-    set_box_open_closed(box_id, True)
-    # TODO notify arduino to open box
+    set_box_open_closed(box_id, user_id, False)
+    print("box with id", box_id, "has been notified to be opened")
+    # TODO send open box request to arduino
+        
+
+def confirm_box_open(box_id):
+    from backend.models.database_service import set_box_open_closed, get_box_by_id
+    box = get_box_by_id(box_id)
+    set_box_open_closed(box_id, None, True)
+    notify_frontend({
+        'box_id': box_id,
+        'user_id': box.opened_by_id
+    }, "open")
     print("box with id", box_id, "has been opened")
 
 
@@ -20,6 +32,10 @@ def close_box(box_id):
     set_box_open_closed(box_id, False)
     # go through items in this box id and set taken by status
     # notify frontend that box has been closed
+    notify_frontend({
+        'box_id': box_id,
+    }, "close")
+    print("box with id", box_id, "has been closed")
 
 
 def notify_frontend(item_status, message='item_update'):
@@ -33,6 +49,16 @@ def resolve_conflict(item_id, confusion_source):
     update_item_state(item.id, confusion_source)
     notify_frontend(confusion_source)
     return item
+
+
+def register_scanning_weight_change(box_id, weight_change):
+    from backend.models.database_service import get_box_by_id, get_user_by_id
+    box = get_box_by_id(box_id)
+    created_by = get_user_by_id(box.opened_by_id)
+    if weight_change > 0:
+        from backend.models.database_service import create_item
+        item = create_item("no_path", "no_category", "no_title", "no_description", "no_condition", weight_change, box, created_by, item_state="created")
+        
     
     
 def register_storage_weight_change(box_id, weight_change):

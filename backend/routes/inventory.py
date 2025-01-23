@@ -186,7 +186,8 @@ def get_box():
 @inventory_bp.route('/open', methods=['POST'])
 def open_box_request():
     box_id = request.args.get("box_id", None)
-    open_box(box_id)
+    user_id = request.args.get("user_id", None)
+    open_box(box_id, user_id)
     
     return jsonify({'message': 'Notified backend to open the box.'}), 200
 
