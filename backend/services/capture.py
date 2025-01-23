@@ -32,8 +32,10 @@ def capture_and_save_image():
         img = Image.open(filepath)
         img = img.resize((800, 600))
         img.save(filepath)
-
-        return jsonify({"message": "Bild erfolgreich aufgenommen", "path": f"/uploads/{filename}"}), 200
+        print("hat geklappt")
+        #return jsonify({"message": "Bild erfolgreich aufgenommen", "path": f"/uploads/{filename}"}), 200
+    
+        return filepath
 
     except requests.exceptions.RequestException as e:
         return jsonify({"message": f"Fehler beim Abrufen des Bildes: {e}"}), 500
