@@ -11,11 +11,11 @@ import openai # type: ignore
 import base64
 import os
 from ..models.database_service import create_item
-from dotenv import load_dotenv # type: ignore
+#from dotenv import load_dotenv # type: ignore
 
 # Get the OpenAI API key from the .env file
-load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
+#load_dotenv()
+#openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def encode_image(image_path):
     """
@@ -30,13 +30,15 @@ def encode_image(image_path):
     Attribution:
       Encoding adapted from OpenAI API Vision documentation: https://platform.openai.com/docs/guides/vision  
     """
-
+    print(image_path)
     # Construct absolute path to make it work
-    file_path = os.getcwd() + "/website-sharingbox/public" + image_path
+    file_path = os.getcwd() + "/website-sharingbox/public/uploads/" + image_path
     file_path = file_path.replace("\\","/")
 
+    print(file_path)
+
     # Encode image file to Base64 string
-    with open(file_path, "rb") as image_file:
+    with open(image_path, "rb") as image_file:
         base64_image = base64.b64encode(image_file.read()).decode("utf-8")
     return f"data:image/jpeg;base64,{base64_image}"
 
