@@ -41,16 +41,43 @@ export default function Header() {
 
     socket.on("open", (data) => {
       console.log("box has been opened");
-      const openedBoxId = data.data.box_id
-      document.cookie = `opened_box_id=${openedBoxId}; path=/;`;
-      router.push("/inventory");
+      const openedBoxId = data.data.box_id;
+      const openedBoxUserId = data.data.user_id;
+      if (openedBoxUserId == userId) {
+        document.cookie = `opened_box_id=${openedBoxId}; path=/;`;
+        router.push("/inventory");
+      }
+    });
+
+    socket.on("close", (data) => {
+      console.log("box has been opened");
+      const openedBoxId = data.data.box_id;
+      const openedBoxIdCookie = getCookie("opened_box_id");
+      if (openedBoxId == openedBoxIdCookie) {
+        console.log("the opened_box_id cookie should now be deleted")
+        document.cookie =
+          "opened_box_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        router.push("/inventory");
+      }
     });
 
     return () => {
       socket.off("confused");
       socket.off("open");
+      socket.off("close");
     };
   }, []);
+
+  function getCookie(name: string) {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [key, value] = cookie.split("=");
+      if (key === name) {
+        return value;
+      }
+    }
+    return "";
+  }
 
   function handleItemSelect(itemId: number | null) {
     if (itemId === null) {
