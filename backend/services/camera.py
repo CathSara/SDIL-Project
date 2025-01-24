@@ -1,14 +1,3 @@
-"""
-This script does the object recognition an image taken by the camera. It includes:
- - taking an image
- - saving it
- - encoding the image in a base64 string
- - recognizing objects on the image (as a base64 string) with the OpenAI API
- - extracting all relevant information of the recognized object (object type, category, title, description, condition)
- - determining whether it is an allowed object or not (depends on object type and condition)
- - handling the object by adding it to the database if it is allowed or reject it otherwise
-"""
-
 from openai import OpenAI
 import base64
 import os
@@ -27,18 +16,13 @@ SAVE_DIRECTORY = os.path.join(os.getcwd(), "website-sharingbox", "public", "uplo
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
 def allowed_file(filename):
-    """Prüfen, ob die Datei eine erlaubte Bilddatei ist."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def capture_image_for_item(item_id):
-    """Bild von der Kamera abrufen und speichern."""
     try:
         response = requests.get(CAMERA_URL, timeout=10)
         response.raise_for_status()
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")  #Format: yyyymmdd_hhmmss
-        #filename = "captured_image_" + timestamp + filename.rsplit('.', 1)[1].lower()
         filename = f"{item_id}.png"
 
         filepath = os.path.join(SAVE_DIRECTORY, filename)
@@ -46,19 +30,6 @@ def capture_image_for_item(item_id):
         os.makedirs(SAVE_DIRECTORY, exist_ok=True)
         with open(filepath, "wb") as file:
             file.write(response.content)
-
-        #img = Image.open(filepath)
-        #img = img.resize((1600, 1200))
-        #img.save(filepath)
-
-        #width, height = img.size  # 1600x1200
-        #new_size = 1024
-        #left = (width - new_size) // 2
-        #top = height - new_size
-        #right = left + new_size
-        #bottom = height
-        #cropped_image = img.crop((left, top, right, bottom))
-        #cropped_image.save(filepath)
 
         if filepath:
           print("Bild erfolgreich aufgenommen unter Pfad: " + str(filepath))
@@ -72,18 +43,6 @@ def capture_image_for_item(item_id):
 
 
 def encode_image(item_id, item_image_path):
-    """
-    Encodes an image to a Base64 string (needed for local images).
-
-    Args:
-      image_path (str): Relative path to the image
-
-    Returns:
-      str: Base64 encoded string
-
-    Attribution:
-      Encoding adapted from OpenAI API Vision documentation: https://platform.openai.com/docs/guides/vision  
-    """
     file_path = os.getcwd() + "/website-sharingbox/public/" + item_image_path
     file_path = file_path.replace("\\","/")
 
@@ -95,20 +54,6 @@ def encode_image(item_id, item_image_path):
 
 
 def analyze_image(item_id, base64_image, item_image_path):
-  """
-  Analyzes the image by recognizing objects through OpenAI and extracting relevant information (object type, category, title, description, condition).
-
-  Args:
-    image_path (str): Relative path to the image
-
-  Returns:
-    dict: Dictionary with relevant information of the recognized object 
-
-  Attribution:
-    API request adapted from OpenAI API Vision documentation: https://platform.openai.com/docs/guides/vision
-    Used help in ChatGPT for information extraction
-  """
-
   load_dotenv()
   client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
   response = client.chat.completions.create(
@@ -191,21 +136,8 @@ def analyze_image(item_id, base64_image, item_image_path):
     
 
 def allow_object(result):
-  """
-  Determines whether the recognized object is allowed to be put in the smart giveaway box based on the object type and the condition.
-
-  Args:
-    result (dict): Dictionary with the relevant information of the recognized object
-
-  Returns:
-    bool: True if object is allowed, False otherwise
-  """
-
-  # Get the values for object type and condition
   object_type = result.get("object_type", "").lower()
   condition = result.get("condition", "").lower()
-
-  # Allows object if it is not in poor condition and not recognized as "no material good" (which includes food items)
   if object_type not in ["no material good"] and condition not in ["poor"]:
     return True
   else:
