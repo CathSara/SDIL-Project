@@ -11,7 +11,7 @@ from backend.models.database_service import create_item
 
 box_pb = Blueprint('box', __name__)
 
-@box_pb.route('/notify_closed', methods=['POST'])
+@box_pb.route('/box/notify_closed', methods=['POST'])
 def notify_box_closed():
     box_id = request.args.get("box_id", None)
     close_box(box_id)
@@ -19,7 +19,7 @@ def notify_box_closed():
     return jsonify({'message': 'Notified backend that box has been closed.'}), 200
 
 
-@box_pb.route('/notify_open', methods=['POST'])
+@box_pb.route('/box/notify_open', methods=['POST'])
 def notify_box_open():
     box_id = request.args.get("box_id", None)
     confirm_box_open(box_id)
