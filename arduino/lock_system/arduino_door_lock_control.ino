@@ -5,6 +5,7 @@ When the lock is unlocked, the reed switch checks when the door has been closed.
 Attribution:
   Solenoid Lock: Used help in ChatGPT to adapt the tutorial code in https://arduinogetstarted.com/tutorials/arduino-controls-door-lock-via-web so that it can receive POST requests from the website and handle them correctly.
   Reed Switch: Extended tutorial code, adapted from https://careers.resmed.com/stem-activity/arduino-door-sensor/
+  Backend Notification: Used help in ChatGPT to implement correct backend connection and POST requests to it
   Used help in ChatGPT to fix CORS (Cross-Origin Resource Sharing) issue (see headers in HTTP response)
 */
 
@@ -17,6 +18,11 @@ Attribution:
 // Access network SSID and password through environment variables in arduino_secrets.h
 const char ssid[] = SECRET_SSID;  // Change your network SSID (name)
 const char pass[] = SECRET_PASS;  // Change your network password (use for WPA, or use as key for WEP)
+
+const char backend_ip[] = SECRET_BACKEND_IP;  // Replace with your IP address
+const int backend_port = 5001;          // Replace with your backend port
+const char endpoint_open[] = "/box/notify_open";
+const char endpoint_close[] = "/box/notify_closed";
 
 int status = WL_IDLE_STATUS;
 int doorState = LOW;
@@ -52,18 +58,21 @@ void setup() {
 void loop() {
   // Reed switch control
   doorSensorState = digitalRead(DOOR_SENSOR_PIN); // Read state
-  if (doorState == HIGH) {  // Only use reed switch when the lock has been unlocked (door opened), lock should always be locked if door is closed
-    if (doorSensorState == LOW && !doorOpened) {  // Variable 'doorOpened' (initially false) prevents the lock to lock itself immediately after the door has opened, wait until reed switch detects opened door
+  //Serial.println(doorSensorState);
+  //if (doorState == HIGH) {  // Only use reed switch when the lock has been unlocked (door opened)
+    if (doorSensorState == LOW && !doorOpened) {  // Variable 'doorOpened' (initially false) prevents the reed switch to detect closed door immediately after the lock has unlocked, wait until reed switch detects opened door
       doorOpened = true;
-      Serial.println("User has opened the door. Wait for the user to close the door.");
-    } else if (doorSensorState == HIGH && doorOpened) {  // After door has been opened (door sensor high -> low) and reed switch detects closed door, signal to relay module to lock the lock
+      Serial.println("User has opened the door.");
+      notifyBackend(backend_ip, backend_port, endpoint_open, "1");  // Notify backend that door has been opened by the user
+    } else if (doorSensorState == HIGH && doorOpened) {  // Only after door has been opened (door sensor high -> low), wait for reed switch to detect closed door
       delay(1000);  // Wait 1s so that lock does not lock itself too early
       doorOpened = false;
       doorState = LOW;
-      digitalWrite(RELAY_PIN, doorState);  // Lock the door
+      //digitalWrite(RELAY_PIN, doorState);  // Lock the door
       Serial.println("The door is closed");
+      notifyBackend(backend_ip, backend_port, endpoint_close, "1");  // Notify backend that door has been closed by the user
     }
-  }
+  //}
   
   // Solenoid lock and relay module control
   WiFiClient client = server.available();  // Listen for incoming clients
@@ -84,15 +93,20 @@ void loop() {
         body += c;  // Read the request body
       }
 
-      // Check if the request body contains the correct box interaction (unlock or lock)
+      // Check if the request body contains the correct path "door/unlock"
       if (body.indexOf("door/unlock") > -1) {  // Check the path
         doorState = HIGH;
         digitalWrite(RELAY_PIN, doorState);  // Unlock the door
         Serial.println("Unlock the door");
-      } else if (body.indexOf("door/lock") > -1) {  // Check the path
+        // NEED TO IMPLEMENT WITHOUT DELAY: Wait 15s until the lock locks itself again
+        delay(5000);
         doorState = LOW;
         digitalWrite(RELAY_PIN, doorState);  // Lock the door
         Serial.println("Lock the door");
+      //} else if (body.indexOf("door/lock") > -1) {  // Check the path
+        //doorState = LOW;
+        //digitalWrite(RELAY_PIN, doorState);  // Lock the door
+        //Serial.println("Lock the door");
       } else {
         Serial.println("No command");
       }
@@ -117,6 +131,50 @@ void loop() {
     client.stop();
   }
 }
+
+// Send POST request to server of website (functions: notify_box_open() or notify_box_closed())
+void notifyBackend(const char* ip, int port, const char* endpoint, const char* box_id) {
+  WiFiClient client;
+
+  Serial.print("Connecting to backend at ");
+  Serial.print(ip);
+  Serial.print(":");
+  Serial.println(port);
+
+  if (client.connect(ip, port)) {  // Connect to the backend
+    Serial.println("Connected to backend!");
+    
+    // Construct HTTP POST request
+    String query = String(endpoint) + "?box_id=" + String(box_id);
+    Serial.println(query);
+    client.print("POST ");
+    client.print(query);
+    client.println(" HTTP/1.1");
+    client.print("Host: ");
+    client.println(ip);
+    client.println("Content-Type: application/json");
+    client.println("Connection: close");
+    client.println();  // End of headers
+    client.println("{}");  // Empty JSON body
+
+    // Wait for server response
+    while (client.connected() || client.available()) {
+      if (client.available()) {
+        String response = client.readString();
+        Serial.println("Response from backend: ");
+        Serial.println(response);
+        break;
+      }
+    }
+
+    client.stop();  // Disconnect from server
+    Serial.println("Connection closed.");
+  } else {
+    Serial.println("Connection to backend failed.");
+  }
+}
+
+
 
 void printWifiStatus() {
   // Print your board's IP address
