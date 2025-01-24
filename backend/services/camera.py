@@ -20,6 +20,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
+import torch
 
 CAMERA_URL = "http://172.20.10.4/capture"
 SAVE_DIRECTORY = os.path.join(os.getcwd(), "website-sharingbox", "public", "uploads")
@@ -46,61 +47,28 @@ def capture_image_for_item(item_id):
         with open(filepath, "wb") as file:
             file.write(response.content)
 
-        img = Image.open(filepath)
-        img = img.resize((1600, 1200))
-        img.save(filepath)
+        #img = Image.open(filepath)
+        #img = img.resize((1600, 1200))
+        #img.save(filepath)
+
+        #width, height = img.size  # 1600x1200
+        #new_size = 1024
+        #left = (width - new_size) // 2
+        #top = height - new_size
+        #right = left + new_size
+        #bottom = height
+        #cropped_image = img.crop((left, top, right, bottom))
+        #cropped_image.save(filepath)
 
         if filepath:
           print("Bild erfolgreich aufgenommen unter Pfad: " + str(filepath))
           item = update_item(item_id, image_path="/uploads/"+filename)
-          edit_image(item.id, item.image_path)
+          encode_image(item.id, item.image_path)
         else:
           return jsonify({"message": "Fehler beim Aufnehmen des Bildes"}), 500
 
     except requests.exceptions.RequestException as e:
         return jsonify({"message": f"Fehler beim Abrufen des Bildes: {e}"}), 500
-    
-    
-def edit_image(item_id, item_image_path):
-    file_path = os.getcwd() + "/website-sharingbox/public/" + item_image_path
-    file_path = file_path.replace("\\","/")
-    with open(file_path, "rb") as image_file:
-        image = Image.open(image_file)
-        if image.mode != "RGBA":  # Ensure the image is in the correct format
-            image = image.convert("RGBA")
-        
-        # Save the image to a BytesIO object
-        image_data = BytesIO()
-        image.save(image_data, format="PNG")
-        image_data.seek(0)  # Rewind the buffer to the beginning
-
-    load_dotenv()
-    api_key = os.getenv("OPENAI_API_KEY")
-    headers = {"Authorization": f"Bearer {api_key}"}
-    url = "https://api.openai.com/v1/images/edits"
-
-    files = {
-        "image": ("input_image.png", image_data, "image/png"),
-        "prompt": (None, "Please edit the image in such a way that you zoom to the image lying on the white shelf in the foreground of the image, so that the object is clearly visible and centered in the image. Everything in the baclkground, and people that might be in the picture should be not visible, or if they are visible because otherwise the full object might not be displayed, they should be blurred slightly."),
-        "n": (None, "1"),
-        "size": (None, "512x512"),
-    }
-    response = requests.post(url, headers=headers, files=files)
-
-
-    if response.status_code == 200:
-      print("Bild erfolgreich angepasst.")
-      output_image_url = response.json()["data"][0]["url"]
-      output_image_response = requests.get(output_image_url)
-      os.makedirs(SAVE_DIRECTORY, exist_ok=True)
-      with open(file_path, "wb") as file:
-          file.write(output_image_response.content)  # Use .content to write the binary data
-      filename = f"{item_id}.png"
-      item = update_item(item_id, image_path="/uploads/" + filename)
-      encode_image(item.id, item.image_path)
-    else:
-      print("Error:", response.json())
-      raise Exception(f"Image editing failed: {response.status_code} {response.text}")
 
 
 def encode_image(item_id, item_image_path):
@@ -123,10 +91,10 @@ def encode_image(item_id, item_image_path):
     with open(file_path, "rb") as image_file:
         base64_image = base64.b64encode(image_file.read()).decode("utf-8")
     #return f"data:image/jpeg;base64,{base64_image}"
-    analyze_image(item_id, base64_image)
+    analyze_image(item_id, base64_image, item_image_path)
 
 
-def analyze_image(item_id, base64_image):
+def analyze_image(item_id, base64_image, item_image_path):
   """
   Analyzes the image by recognizing objects through OpenAI and extracting relevant information (object type, category, title, description, condition).
 
@@ -166,7 +134,7 @@ def analyze_image(item_id, base64_image):
         "category": None,
         "title": None,
         "description": None,
-        "condition": None
+        "condition": None,
     }
     
   for line in content.split(", "):
@@ -181,12 +149,30 @@ def analyze_image(item_id, base64_image):
       elif "Condition:" in line:
           result["condition"] = line.split("Condition:")[1].strip()
 
-
   print(result)
   # allow object
   from backend.services import notify_frontend
   if allow_object(result) == True:
-    item = update_item(item_id, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"], item_state="scanned")
+    file_path = os.getcwd() + "/website-sharingbox/public/" + item_image_path
+    file_path = file_path.replace("\\","/")
+    object_name = result["title"]
+    center_coords = detect_object(file_path, object_name)
+    if center_coords:
+      x_center = center_coords[0]
+      y_center = center_coords[1]
+    else:
+       x_center=800
+       y_center=600
+    image = Image.open(file_path)
+    width, height = image.size
+    crop_size = 1024
+    left = max(x_center - crop_size // 2, 0)
+    top = max(y_center - crop_size // 2, 0)
+    right = min(x_center + crop_size // 2, width)
+    bottom = min(y_center + crop_size // 2, height)
+    cropped_image = image.crop((left, top, right, bottom))
+    cropped_image.save(file_path)
+    item = update_item(item_id, image_path=item_image_path, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"], item_state="scanned")
     print(item)
     notify_frontend({
         "id": item.id,
@@ -224,3 +210,21 @@ def allow_object(result):
     return True
   else:
     return False
+  
+def detect_object(image_path, object_name):
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+    results = model(image_path)
+
+    detections = results.xyxy[0].cpu().numpy()
+    for detection in detections:
+        x_min, y_min, x_max, y_max, confidence, class_id = detection
+        label = results.names[int(class_id)]  # Class name
+        print(label)
+        
+        if label:
+            print("Object found")
+            x_center = int((x_min + x_max) / 2)
+            y_center = int((y_min + y_max) / 2)
+            return x_center, y_center
+
+    return None
