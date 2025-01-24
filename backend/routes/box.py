@@ -1,15 +1,24 @@
 from flask import Blueprint, jsonify, request
 
-from backend.services import close_box, confirm_box_open
+from backend.services import close_box, confirm_box_open, register_storage_weight_change
 
 from backend.services.camera import capture_image_for_item
 
-from backend.models.database_service import create_item
-
-
-
 
 box_pb = Blueprint('box', __name__)
+
+@box_pb.route('/storage_weight_change', methods=['POST'])
+def storage_weight_change():
+    box_id = request.args.get("box_id", None)
+    weight_change = request.args.get("weight_change", None)
+    
+    items = register_storage_weight_change(box_id, weight_change)
+    
+    if items:
+        items_data = [item.to_detail_dict() for item in items]
+        return jsonify(items_data)
+    else:
+        return jsonify({"message": "No item in this weight range"})
 
 @box_pb.route('/notify_closed', methods=['POST'])
 def notify_box_closed():
