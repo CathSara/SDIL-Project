@@ -62,7 +62,6 @@ def register_scanning_weight_change(box_id, weight_change):
         capture_image_for_item(item.id)
         
     
-    
 def register_storage_weight_change(box_id, weight_change):
     from backend.models.database_service import update_item_state
     weight_change = int(weight_change)

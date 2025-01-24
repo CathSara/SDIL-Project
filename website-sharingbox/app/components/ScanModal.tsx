@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 
 interface ConfusionModalProps {
   isOpen: boolean;
+  item: Item
+}
+
+interface Item {
   id: number;
   image_path: string;
   category: string;
@@ -18,34 +22,37 @@ interface Category {
 
 const ScanModal: React.FC<ConfusionModalProps> = ({
   isOpen,
-  id,
-  image_path,
-  category,
-  title,
-  description,
-  condition,
+  item
 }) => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [categories, setCategories] = useState<Category[]>([]);
   const conditions = ["new", "flawless", "used", "worn"];
-  const [categoryEdit, setCategoryEdit] = useState<string>(category);
-  const [titleEdit, setTitleEdit] = useState<string>(title);
-  const [descriptionEdit, setDescriptionEdit] = useState<string>(description);
-  const [conditionEdit, setConditionEdit] = useState<string>(condition);
+  const [categoryEdit, setCategoryEdit] = useState<string>();
+  const [titleEdit, setTitleEdit] = useState<string>();
+  const [descriptionEdit, setDescriptionEdit] = useState<string>();
+  const [conditionEdit, setConditionEdit] = useState<string>();
 
   useEffect(() => {
+    if (item) {
+      setTitleEdit(item.title);
+      setDescriptionEdit(item.description);
+      setCategoryEdit(item.category);
+      setConditionEdit(item.condition);
+    }
+
     fetch(`${API_BASE_URL}/inventory/categories`)
       .then((response) => response.json())
       .then((data: Category[]) => setCategories(data))
       .catch((error) => console.error("Error fetching categories:", error));
-  }, []);
+  }, [item]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
     // Construct the payload
     const payload = {
-      item_id: id,
+      item_id: item.id,
       title: titleEdit,
       description: descriptionEdit,
       category: categoryEdit,
@@ -86,7 +93,7 @@ const ScanModal: React.FC<ConfusionModalProps> = ({
           <div className="rounded-lg p-2 cursor-pointer flex flex-col flex-center">
             <div className="flex flex-col sm:flex-row justify-evenly">
               <Image
-                src={image_path}
+                src={item.image_path}
                 alt="Titel"
                 className="object-cover md:w-[420px] md:h-[420px] w-[350px] h-[350px]"
                 width={400}

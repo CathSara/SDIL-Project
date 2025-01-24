@@ -29,6 +29,7 @@ def allowed_file(filename):
     """Prüfen, ob die Datei eine erlaubte Bilddatei ist."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 def capture_image_for_item(item_id):
     """Bild von der Kamera abrufen und speichern."""
     try:
@@ -58,6 +59,7 @@ def capture_image_for_item(item_id):
 
     except requests.exceptions.RequestException as e:
         return jsonify({"message": f"Fehler beim Abrufen des Bildes: {e}"}), 500
+    
     
 def edit_image(item_id, item_image_path):
     file_path = os.getcwd() + "/website-sharingbox/public/" + item_image_path
@@ -100,6 +102,7 @@ def edit_image(item_id, item_image_path):
       print("Error:", response.json())
       raise Exception(f"Image editing failed: {response.status_code} {response.text}")
 
+
 def encode_image(item_id, item_image_path):
     """
     Encodes an image to a Base64 string (needed for local images).
@@ -121,6 +124,7 @@ def encode_image(item_id, item_image_path):
         base64_image = base64.b64encode(image_file.read()).decode("utf-8")
     #return f"data:image/jpeg;base64,{base64_image}"
     analyze_image(item_id, base64_image)
+
 
 def analyze_image(item_id, base64_image):
   """
@@ -177,13 +181,28 @@ def analyze_image(item_id, base64_image):
       elif "Condition:" in line:
           result["condition"] = line.split("Condition:")[1].strip()
 
+
   print(result)
   # allow object
+  from backend.services import notify_frontend
   if allow_object(result) == True:
-    item = update_item(item_id, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"])
+    item = update_item(item_id, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"], item_state="scanned")
     print(item)
+    notify_frontend({
+        "id": item.id,
+        "image_path": item.image_path,
+        "category": item.category,
+        "title": item.title,
+        "description": item.description,
+        "condition": item.condition,
+    }, "item_scan")
   else:
     print("Not allowed")
+    notify_frontend({
+        "id": item.id
+    }, "not_allowed_item_scan")
+    # TODO delete item
+    
 
 def allow_object(result):
   """

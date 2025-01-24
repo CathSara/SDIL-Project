@@ -4,16 +4,36 @@ import ConfusionModal from "./ConfusionModal";
 import { useRouter } from "next/navigation";
 import ScanModal from "./ScanModal";
 
+interface Item {
+  id: number;
+  image_path: string;
+  category: string;
+  title: string;
+  description: string;
+  condition: string;
+}
+
 const socket = io(process.env.NEXT_PUBLIC_API_BASE_URL);
 
 export default function Header() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfusionModalOpen, setIsConfusionModalOpen] = useState(false);
   const [confusionItems, setConfusionItems] = useState([]);
   const [confusionSource, setConfusionSource] = useState("");
+  const [isScanModalOpen, setScanIsModalOpen] = useState(false);
+  const [scannedItem, setScannedItem] = useState<Item>();
   const openedBoxId = getCookie("opened_box_id");
   const userId = getCookie("user_id");
+
+  const defaultItem: Item = {
+    id: 0,
+    image_path: "",
+    category: "",
+    title: "",
+    description: "",
+    condition: "",
+  };
 
   useEffect(() => {
     socket.on("confused", (data) => {
@@ -23,7 +43,7 @@ export default function Header() {
           console.log("if works");
           setConfusionItems(data.data.items);
           setConfusionSource(data.data.confusion_source);
-          setIsModalOpen(true); // Open the modal
+          setIsConfusionModalOpen(true); // Open the modal
         }
         localStorage.setItem("confusionData", JSON.stringify(data.data)); // Save data for persistence
       }
@@ -36,7 +56,7 @@ export default function Header() {
       setConfusionItems(parsedData.items);
       setConfusionSource(parsedData.confusion_source);
       if (openedBoxId) {
-        setIsModalOpen(true); // Open the modal
+        setIsConfusionModalOpen(true); // Open the modal
       }
     }
 
@@ -62,10 +82,17 @@ export default function Header() {
       }
     });
 
+    socket.on("item_scan", (data) => {
+      console.log("received item scan", data.data.image_path);
+      setScannedItem(data.data);
+      setScanIsModalOpen(true)
+    });
+
     return () => {
       socket.off("confused");
       socket.off("open");
       socket.off("close");
+      socket.off("item_scan");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -76,7 +103,7 @@ export default function Header() {
       return;
     }
     console.log("Selected item ID:", itemId);
-    setIsModalOpen(false);
+    setIsConfusionModalOpen(false);
     localStorage.removeItem("confusionData"); // Clear persistence
 
     // Notify the backend of the selection
@@ -112,6 +139,7 @@ export default function Header() {
         {openedBoxId && userId ? (
           <div className="top-0 left-0 w-full bg-dark-green text-white text-center py-2 font-bold z-50">
             The box is open - please close it after you are done.
+            {scannedItem?.title}
           </div>
         ) : (
           <div></div>
@@ -119,21 +147,13 @@ export default function Header() {
       </header>
 
       <ConfusionModal
-        isOpen={isModalOpen}
+        isOpen={isConfusionModalOpen}
         items={confusionItems}
         onItemSelect={handleItemSelect}
         confusion_source={confusionSource}
       />
 
-      <ScanModal
-        isOpen={false}
-        id={1}
-        image_path={"/uploads/mug.jpg"}
-        category={"Dishes"}
-        title={"Snoopy"}
-        description={"Snoopy Mug"}
-        condition={"flawless"}
-      />
+      <ScanModal isOpen={isScanModalOpen} item={scannedItem || defaultItem} />
     </>
   );
 }
