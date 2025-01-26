@@ -180,4 +180,3 @@ void printWifiStatus() {
   Serial.print(WiFi.RSSI());
   Serial.println(" dBm");
 }
-
