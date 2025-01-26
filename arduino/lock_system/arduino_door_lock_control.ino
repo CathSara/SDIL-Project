@@ -20,7 +20,7 @@ const char ssid[] = SECRET_SSID;  // Change your network SSID (name)
 const char pass[] = SECRET_PASS;  // Change your network password (use for WPA, or use as key for WEP)
 
 const char backend_ip[] = SECRET_BACKEND_IP;  // Replace with your IP address
-const int backend_port = 5001;          // Replace with your backend port
+const int backend_port = 5000;          // Replace with your backend port
 const char endpoint_open[] = "/box/notify_open";
 const char endpoint_close[] = "/box/notify_closed";
 
@@ -29,6 +29,9 @@ int doorState = LOW;
 int doorSensorState = LOW;
 
 bool doorOpened = false;
+
+unsigned long timeUnlocked = 0; // Time when door has been unlocked
+bool doorUnlocked = false;
 
 WiFiServer server(80);
 
@@ -58,21 +61,16 @@ void setup() {
 void loop() {
   // Reed switch control
   doorSensorState = digitalRead(DOOR_SENSOR_PIN); // Read state
-  //Serial.println(doorSensorState);
-  //if (doorState == HIGH) {  // Only use reed switch when the lock has been unlocked (door opened)
-    if (doorSensorState == LOW && !doorOpened) {  // Variable 'doorOpened' (initially false) prevents the reed switch to detect closed door immediately after the lock has unlocked, wait until reed switch detects opened door
-      doorOpened = true;
-      Serial.println("User has opened the door.");
-      notifyBackend(backend_ip, backend_port, endpoint_open, "1");  // Notify backend that door has been opened by the user
-    } else if (doorSensorState == HIGH && doorOpened) {  // Only after door has been opened (door sensor high -> low), wait for reed switch to detect closed door
-      delay(1000);  // Wait 1s so that lock does not lock itself too early
-      doorOpened = false;
-      doorState = LOW;
-      //digitalWrite(RELAY_PIN, doorState);  // Lock the door
-      Serial.println("The door is closed");
-      notifyBackend(backend_ip, backend_port, endpoint_close, "1");  // Notify backend that door has been closed by the user
-    }
-  //}
+  if (doorState == HIGH && doorSensorState == LOW && !doorOpened) {  // Only start using reed switch when the door is unlocked and the reed switch detects that the door has actually been opened
+    doorOpened = true;
+    Serial.println("User has opened the door.");
+    notifyBackend(backend_ip, backend_port, endpoint_open, "1");  // Notify backend that door has been opened by the user
+  } else if (doorSensorState == HIGH && doorOpened) {  // Only after door has been opened, wait for reed switch to detect closed door
+    delay(1000);  // Wait 1s so that lock does not lock itself too early
+    doorOpened = false;
+    Serial.println("The door is closed");
+    notifyBackend(backend_ip, backend_port, endpoint_close, "1");  // Notify backend that door has been closed by the user
+  }
   
   // Solenoid lock and relay module control
   WiFiClient client = server.available();  // Listen for incoming clients
@@ -98,17 +96,8 @@ void loop() {
         doorState = HIGH;
         digitalWrite(RELAY_PIN, doorState);  // Unlock the door
         Serial.println("Unlock the door");
-        // NEED TO IMPLEMENT WITHOUT DELAY: Wait 15s until the lock locks itself again
-        delay(5000);
-        doorState = LOW;
-        digitalWrite(RELAY_PIN, doorState);  // Lock the door
-        Serial.println("Lock the door");
-      //} else if (body.indexOf("door/lock") > -1) {  // Check the path
-        //doorState = LOW;
-        //digitalWrite(RELAY_PIN, doorState);  // Lock the door
-        //Serial.println("Lock the door");
-      } else {
-        Serial.println("No command");
+        timeUnlocked = millis();  // Save time where door has been unlocked
+        doorUnlocked = true;
       }
     }
 
@@ -129,6 +118,14 @@ void loop() {
     delay(10);
     // Close the connection
     client.stop();
+  }
+
+  // Lock door again after timer runs out
+  if(doorUnlocked && millis() - timeUnlocked >= 15000){ // When door has been unlocked for at least 15s, lock it
+      doorState = LOW;
+      digitalWrite(RELAY_PIN, doorState);  // Lock the door
+      Serial.println("Lock the door");
+      doorUnlocked = false;
   }
 }
 
@@ -173,8 +170,6 @@ void notifyBackend(const char* ip, int port, const char* endpoint, const char* b
     Serial.println("Connection to backend failed.");
   }
 }
-
-
 
 void printWifiStatus() {
   // Print your board's IP address
