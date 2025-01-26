@@ -1,0 +1,1 @@
+export const arduinoIP = "http://arduino_ip";

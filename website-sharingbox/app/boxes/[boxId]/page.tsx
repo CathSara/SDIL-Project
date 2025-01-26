@@ -4,6 +4,7 @@ import Footer from "@/app/components/Footer";
 import Header from "@/app/components/Header";
 import LoginForm from "@/app/components/LoginForm";
 import React, { use, useEffect, useState } from "react";
+import { arduinoIP } from '../config';
 
 interface Box {
   box_picture_path: string;
@@ -55,6 +56,28 @@ export default function Page({
       .catch((error) => console.error("Error opening box:", error));
   };
 
+  // Used help in ChatGPT and https://arduinogetstarted.com/tutorials/arduino-controls-door-lock-via-web
+  // to create the function for a button that correctly connects with the Arduino UNO R4 Wifi and posts requests to it to control the lock
+  const unlockDoor = async () => {
+      try {
+        const lockStatus = 'door/unlock'
+        const response = await fetch(`${arduinoIP}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lockStatus }),
+        });
+    
+        if (response.ok) {
+          console.log(`Door interaction to "${lockStatus}" was successful`);
+           //window.location.href = nextPage;
+         } else {
+           console.error("Failed to control the door");
+        }
+       } catch (error) {
+         console.error("Error communicating with the Arduino:", error);
+       }
+    };
+
   function getCookie(name: string) {
     const cookies = document.cookie.split("; ");
     for (const cookie of cookies) {
@@ -92,7 +115,11 @@ export default function Page({
                         </p>
                         <div className="flex justify-center">
                           <button
-                            onClick={openBox}
+                            onClick={(e) => {
+                              e.preventDefault(); // Prevent default behavior
+                              openBox(); // Call openBox
+                              unlockDoor(); // Call unlockDoor
+                            }}
                             className="px-20 bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green mt-5"
                           >
                             Unlock
