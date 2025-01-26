@@ -143,6 +143,7 @@ def allow_object(result):
   else:
     return False
   
+  
 def detect_object(image_path, object_name):
     model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
     results = model(image_path)
