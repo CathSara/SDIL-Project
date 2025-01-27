@@ -55,7 +55,7 @@
 - Within the Folder `website-sharingbox/app/boxes`:
 	- Create the file `config.js`
 	- Copy the code of the file `example.config.js`
-	- Replace `arduino_ip` with the IP address shown in the Serial Monitor
+	- Replace "arduino_ip" in the example link with the IP address shown in the Serial Monitor
 - Run the frontend and backend of the website.
 
 ## How it works
