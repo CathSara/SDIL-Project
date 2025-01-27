@@ -61,11 +61,11 @@ void setup() {
 void loop() {
   // Reed switch control
   doorSensorState = digitalRead(DOOR_SENSOR_PIN); // Read state
-  if (doorState == HIGH && doorSensorState == LOW && !doorOpened) {  // Only start using reed switch when the door is unlocked and the reed switch detects that the door has actually been opened
+  if (doorState == HIGH && doorSensorState == HIGH && !doorOpened) {  // Only start using reed switch when the door is unlocked and the reed switch detects that the door has actually been opened
     doorOpened = true;
     Serial.println("User has opened the door.");
     notifyBackend(backend_ip, backend_port, endpoint_open, "1");  // Notify backend that door has been opened by the user
-  } else if (doorSensorState == HIGH && doorOpened) {  // Only after door has been opened, wait for reed switch to detect closed door
+  } else if (doorSensorState == LOW && doorOpened) {  // Only after door has been opened, wait for reed switch to detect closed door
     delay(1000);  // Wait 1s so that lock does not lock itself too early
     doorOpened = false;
     Serial.println("The door is closed");
@@ -180,3 +180,4 @@ void printWifiStatus() {
   Serial.print(WiFi.RSSI());
   Serial.println(" dBm");
 }
+
