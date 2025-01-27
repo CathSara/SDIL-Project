@@ -36,7 +36,7 @@
 	- GND ↔ a cable of the reed switch (free of choice which cable)
 	- Pin 10 ↔ other cable of the reed switch (free of choice which cable)
 
-## Instructions
+## Build Instructions
 
 - Connect the Arduino UNO R4 WiFi to your PC with the USB-C cable.
 - Switch to the Arduino IDE and select the COM port that is connected with the Arduino UNO R4 WiFi.
@@ -55,11 +55,11 @@
 - Within the Folder `website-sharingbox/app/boxes`:
 	- Create the file `config.js`
 	- Copy the code of the file `example.config.js`
-	- Replace `arduino_ip` with the IP address shown in the Serial Monitor
-- Run the frontend and backend of the website.
+	- Replace "arduino_ip" in the example link with the IP address shown in the Serial Monitor
 
 ## How it works
 
+- Run the frontend and backend of the website.
 - On the page `/boxes/[box_id]`, click on the button "Unlock" to unlock the lock.
 	- Replace [box_id] with actual box ID.
 - The lock will unlock for 15 seconds and then lock itself again.
