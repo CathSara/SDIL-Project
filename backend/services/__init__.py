@@ -59,9 +59,9 @@ def notify_frontend(item_status, message='item_update'):
     
     
 def resolve_conflict(item_id, confusion_source):
-    from backend.models.database_service import get_item_by_id, update_item_state
+    from backend.models.database_service import get_item_by_id, update_item
     item = get_item_by_id(item_id)
-    update_item_state(item.id, confusion_source)
+    update_item(item.id, item_state=confusion_source)
     notify_frontend(confusion_source)
     return item
 
