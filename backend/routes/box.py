@@ -4,6 +4,9 @@ from backend.services import close_box, confirm_box_open, register_storage_weigh
 
 from backend.services.camera import capture_image_for_item
 
+import time
+
+
 
 box_pb = Blueprint('box', __name__)
 
@@ -41,9 +44,20 @@ def notify_box_open():
 # Used for testing the capture functionality
 #Can be removed when capture_image_for_item is called in register_scanning_weight_change crrectly
 def capture_image():
-    register_scanning_weight_change(1, 333)
-    #capture_image_for_item(1) #Snoopy Tasse
+    print("Putting item in scanning...")
+    register_scanning_weight_change(1, 666)
+    print("Success!")
+    #import time
+    #time.sleep(2)
+    #print("Taking item out of scanning...")
+    #time.sleep(2)
+    #register_scanning_weight_change(1, -666)
+    #time.sleep(2)
+    #print("Putting in storage...")
+    #register_storage_weight_change(1,666)
     return jsonify({'message': 'Image and info have been added.'}), 200
+
+  
 
 
 # Todo: Scanning weight change
