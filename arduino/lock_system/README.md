@@ -12,7 +12,7 @@
 
 ## Required Software
 
-- Arduino IDE
+- [Arduino IDE](https://www.arduino.cc/en/software)
 - Smart Giveaway Box Website (see README's of [Frontend](https://github.com/CathSara/SDIL-Project/tree/main/website-sharingbox) and [Backend](https://github.com/CathSara/SDIL-Project/tree/main/backend) for more information)
 
 ## Cable Connections
@@ -65,5 +65,5 @@
 - The lock will unlock for 15 seconds and then lock itself again.
 - In the meantime, the reed switch detects when the door has actually been opened, sending a notification to the backend.
 - When the door has been closed:
-	- The "tongue" of the lock will be pushed inside by the door latch plate and stay locked within that plate
+	- The "tongue" of the lock will be pushed inside by the built-in door latch plate and stay locked within that plate
 	- Reed switch detects the closed door and sends a notification to the backend
