@@ -55,6 +55,7 @@ def close_box(box_id):
 def notify_frontend(item_status, message='item_update'):
     from . import socketio
     socketio.emit(message, {'data': item_status})
+    print("Notifying frontend about", message, "with data:", item_status)
     
     
 def resolve_conflict(item_id, confusion_source):
@@ -77,7 +78,7 @@ def register_scanning_weight_change(box_id, weight_change):
         
     
 def register_storage_weight_change(box_id, weight_change):
-    from backend.models.database_service import update_item_state
+    from backend.models.database_service import update_item
     weight_change = int(weight_change)
     state = "stored" if weight_change > 0 else "picked"
     items = determine_item(box_id, weight_change)
@@ -85,7 +86,7 @@ def register_storage_weight_change(box_id, weight_change):
         pass # TODO if positive, notify that there was an item added which is unknown
     if len(items) == 1:
         item = items[0]
-        update_item_state(item.id, state)
+        update_item(item.id, item_state=state)
         notify_frontend(state)
         return items
     else: # handle multiple items in question
@@ -124,4 +125,13 @@ def determine_item(box_id, weight_change):
         item for item in items
         if not (abs(item.weight - abs(weight_change)) > min_precision or item.item_state != state_filter)
     ]
+    
+    for item in items:
+        if (abs(item.weight - abs(weight_change)) < min_precision and item.item_state=="scanned"):
+            filtered_items.append(item)
+            
+    print("filtered items:")
+    for item in filtered_items:
+        print("item_id", item.id, "item_state", item.item_state)
+    
     return filtered_items
