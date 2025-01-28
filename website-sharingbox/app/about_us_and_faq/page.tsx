@@ -70,18 +70,26 @@ export default function Page() {
               ),
             },
             {
+              question: "How can I open the box?",
+              answer: (
+                <>
+                  Scan the QR code on the box. This will redirect you to a page
+                  where you can unlock this specific box if you are logged in.
+                  Press on the button "Unlock" and open the door within 15 seconds.
+                  You should then be redirected to the inventory page of this
+                  specific box and be able to take or donate an item.
+                </>
+              ),
+            },
+            {
               question: "How can I donate an item?",
               answer: (
                 <>
-                  After logging in, visit the{" "}
-                  <Link
-                    href="/box_interaction/take_or_donate"
-                    className="text-white underline hover:text-yellow-300"
-                  >
-                    &quot;Take/Donate an Item&quot;
-                  </Link>{" "}
-                  page. Click &quot;Donate Item&quot; and follow the website
-                  instructions.
+                  Once you have opened the box, you are required to put the item
+                  on the <b>scan shelf</b> first to let the box take a picture of
+                  the item, save its weight and automatically recognize the item.
+                  If the item is allowed, put it on the <b>storage shelf</b> of the
+                  box and it will be saved in the inventory. 
                 </>
               ),
             },
@@ -100,24 +108,22 @@ export default function Page() {
                 "How does the box recognize whether my item is allowed?",
               answer: (
                 <>
-                  When you place your item on the upper shelf, the box takes a
-                  picture and sends it to the server for recognition. The result
-                  will be shown on the website.
+                  When you place your item on the scan shelf, the box takes a
+                  picture and sends it to the server to recognize the item.
+                  The allowance of an item is determined by this integrated
+                  item recognition by OpenAI.
                 </>
               ),
             },
             {
-              question: "How can I take an item from the box?",
+              question: "How can I take an item?",
               answer: (
                 <>
-                  After logging in, visit the{" "}
-                  <Link
-                    href="/box_interaction/take_or_donate"
-                    className="text-white underline hover:text-yellow-300"
-                  >
-                    &quot;Take/Donate an Item&quot;
-                  </Link>{" "}
-                  page. Click &quot;Take Item&quot; and follow the instructions.
+                  Once you have opened the box and take an item out of it,
+                  the inventory will automatically recognize the item by its
+                  weight and mark it as "taken" as long as you keep it. When
+                  you close the door, the item will be fully removed from the
+                  inventory. 
                 </>
               ),
             },
