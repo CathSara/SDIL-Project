@@ -98,11 +98,12 @@ def get_user_by_id(user_id):
 
 ##### ITEM #####
 
-def create_item(image_path, category, title, description, condition, weight, box, created_by, item_state="stored"):
+def create_item(image_path, category, title, description, condition, weight, box, created_by, item_state):
     """
     Add a new item to a box.
     """
     current_time = datetime.now(timezone.utc)
+    box_object = get_box_by_id(box)
     item = Item(
         image_path=image_path,
         category=category,
@@ -110,7 +111,7 @@ def create_item(image_path, category, title, description, condition, weight, box
         description=description,
         condition=condition,
         weight=weight,
-        box=box,
+        box=box_object,
         created_by=created_by,
         created_at=current_time,
         item_state=item_state

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from backend.services import close_box, confirm_box_open, register_storage_weight_change
+from backend.services import close_box, confirm_box_open, register_storage_weight_change, register_scanning_weight_change
 
 from backend.services.camera import capture_image_for_item
 
@@ -41,9 +41,9 @@ def notify_box_open():
 # Used for testing the capture functionality
 #Can be removed when capture_image_for_item is called in register_scanning_weight_change crrectly
 def capture_image():
-    capture_image_for_item(1) #Snoopy Tasse
+    register_scanning_weight_change(1, 333)
+    #capture_image_for_item(1) #Snoopy Tasse
     return jsonify({'message': 'Image and info have been added.'}), 200
 
-# storage weight change
 
-# scanning weight change
+# Todo: Scanning weight change

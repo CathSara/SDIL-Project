@@ -36,6 +36,7 @@ item_id: Unique id value of the item , which is newly created immediately before
 Calls encode_image as next step of the pipeline.
 """
 def capture_image_for_item(item_id):
+    print("In function")
     try:
         response = requests.get(CAMERA_URL, timeout=10)
         response.raise_for_status()
