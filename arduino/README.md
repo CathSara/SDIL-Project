@@ -6,7 +6,7 @@ This guide provides step by step instructions to build the box equipped with a l
 
 - A box with at least one door and at least two shelves
 - [Lock System](https://github.com/CathSara/SDIL-Project/tree/main/arduino/lock_system)
-- [Camera System](https://github.com/CathSara/SDIL-Project/tree/main/arduino/camera_system)
+- [Camera System](https://github.com/CathSara/SDIL-Project/tree/main/arduino/camera)
 - [Weight Sensor System](https://github.com/CathSara/SDIL-Project/tree/main/arduino/weight_sensor_system) for each shelf
 - Door latch plate for the lock
 - Mounting bracket for the camera
