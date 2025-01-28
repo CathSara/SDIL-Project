@@ -1,8 +1,9 @@
 from flask_socketio import emit # type: ignore
-
+import requests # type: ignore
 
 socketio = None
 min_precision = 5 # +/- 5 miligrams accuracy
+demo = True
 
 def init_services(socketio_instance):
     global socketio
@@ -13,7 +14,20 @@ def open_box(box_id, user_id):
     from backend.models.database_service import set_box_open_closed
     set_box_open_closed(box_id, user_id, False)
     print("box with id", box_id, "has been notified to be opened")
-    # TODO send open box request to arduino
+    
+    if not demo:
+        url = 'http://172.20.10.14'
+
+        try:
+            headers = {'Content-Type': 'text/plain'}
+            response = requests.post(url, data='door/unlock', headers=headers, timeout=5)
+
+            if response.status_code == 200:
+                print("The door has been unlocked successfully.")
+            else:
+                print(f"Failed to unlock the door. Status code: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error sending request: {e}")
         
 
 def confirm_box_open(box_id):
