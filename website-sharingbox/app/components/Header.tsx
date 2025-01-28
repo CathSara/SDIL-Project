@@ -41,7 +41,7 @@ export default function Header() {
   };
 
   useEffect(() => {
-    if (!getCookie("tutorial_seen")) {
+    if (!getCookie("tutorial_seen") && openedBoxId) {
       setTourModalVisible(true);
     }
 
