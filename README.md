@@ -79,7 +79,7 @@ We welcome feedback, bug reports, and contributions! If you encounter any issues
 
 ### Contributors
 
-These are the current contributors for this repository. We welcome contributions!
+These are the current contributors for this repository. Feel free to contribute!
 
 <a href="https://github.com/CathSara/SDIL-Project/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=CathSara/SDIL-Project" />
