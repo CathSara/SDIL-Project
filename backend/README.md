@@ -10,14 +10,14 @@
     ```
     - For Windows:
 
-      Install Python and pip [here](https://www.python.org/downloads/windows/).
-      Run the following commands to check if Python and pip are installed:
+      Download Python and Pip [here](https://www.python.org/downloads/windows/).
+      Verify installation by running:
     ```
     python --version
     pip --version
     ```
 
-3. Install virtualenv:
+2. Install virtualenv:
 
 ```
 pip install virtualenv
