@@ -37,6 +37,6 @@ No cable connections are required as the ESP32 camera module is already connecte
 
 ## How it works
 
-- Run the frontend and backend of the website.
+- Run the frontend and backend of the website. See the README's of [Frontend](https://github.com/CathSara/SDIL-Project/tree/main/website-sharingbox) and [Backend](https://github.com/CathSara/SDIL-Project/tree/main/backend) for more information.
 - Now, when a new item is placed into a box, the camera automatically takes an image of the item.
 - The code in the `capture.py` file specifies how this is done. Afterwards, the taken image is encoded to a Base64 image and sent to the OpenAI Vision API, where the item features are automatically detected. The image is then cropped to the center coordinates of the object in the image, and item information are updated so that the item can be included in the inventory of the box.
