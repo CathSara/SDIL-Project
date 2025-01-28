@@ -15,10 +15,11 @@ interface Box {
 }
 
 export default function Page() {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [boxes, setBoxes] = useState<Box[]>([]);
 
   const fetchBoxes = () => {
-    fetch("http://127.0.0.1:5000/inventory/boxes")
+    fetch(`${API_BASE_URL}/inventory/boxes`)
       .then((response) => response.json())
       .then((data: Box[]) => setBoxes(data))
       .catch((error) => console.error("Error fetching boxes:", error));

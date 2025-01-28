@@ -23,6 +23,10 @@ virtualenv venv
 source venv/bin/activate
 ```
 
+(FOR WINDOWS: python -m venv venv
+
+then activate with venv\Scripts\activate)
+
 4. Install project dependencies:
 
 ```
@@ -40,6 +44,7 @@ OPENAI_API_KEY='your_openai_api_key'
 
 6. Migrate the database:
 
+(FOR WINDOWS: vorher set FLASK_APP=run.py ausführen)
 ```
 export FLASK_APP=run.py
 flask db init
@@ -52,6 +57,7 @@ flask db upgrade
 ```
 python3 run.py
 ```
+(FOR WINDOWS: python run.py)
 
 8. While the Flask app is running, open another terminal tab. Within the SDIL-Project/ folder, seed the database by running:
 
@@ -59,6 +65,10 @@ python3 run.py
 export FLASK_APP=run.py
 flask seed-db
 ```
+
+(FOR WINDOWS:
+set FLASK_APP=run.py
+flask seed-db)
 
 You only need to execute `export FLASK_APP=run.py` when you open a new terminal window (you don't have to do it in an old window).
 

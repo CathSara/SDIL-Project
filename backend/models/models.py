@@ -9,13 +9,15 @@ class Box(db.Model):
     items = db.relationship('Item', backref='box', lazy=True)  # Relationship with items
     box_picture_path = db.Column(db.String(255), nullable=True)
     maps_link = db.Column(db.String(255), nullable=True)
+    opened = db.Column(db.Boolean, default=False)
+
+    # Foreign key to reference the user who opened the box
     opened_by_id = db.Column(
         db.Integer,
         db.ForeignKey('users.id', name='fk_boxes_opened_by_id'),
         nullable=True
-    )  # Foreign key: The user who opened the box (optional)
-    opened_by = db.relationship('User', foreign_keys=[opened_by_id], backref='boxes_opened')
-    opened_at = db.Column(db.DateTime, nullable=True, default=func.now())
+    )
+    opened_by = db.relationship('User', backref='opened_boxes', foreign_keys=[opened_by_id])
 
     def to_dict(self):
         return {
@@ -24,8 +26,8 @@ class Box(db.Model):
             "location": self.location,
             "box_picture_path": self.box_picture_path,
             "maps_link": self.maps_link,
+            "opened": self.opened,
             "opened_by_id": self.opened_by_id,
-            "opened_at": self.opened_at
         }
 
 
@@ -38,18 +40,18 @@ class Item(db.Model):
     description = db.Column(db.Text, nullable=True)
     condition = db.Column(db.String(50), nullable=False)
     weight = db.Column(db.Float, nullable=False)
-
     number_of_views = db.Column(db.Integer, default=0)
+    item_state = db.Column(db.String(20), nullable=False, default='stored') # ["created", "scanned", "stored", "picked", "taken"]
 
     box_id = db.Column(
         db.Integer,
-        db.ForeignKey('boxes.id', name='fk_items_box_id'),  # Added constraint name
+        db.ForeignKey('boxes.id', name='fk_items_box_id'),
         nullable=False
     )  # Foreign key: The box where the item is stored
 
     created_by_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', name='fk_items_created_by_id'),  # Added constraint name
+        db.ForeignKey('users.id', name='fk_items_created_by_id'),
         nullable=False
     )  # Foreign key: The user who put the item in
     created_by = db.relationship('User', foreign_keys=[created_by_id], backref='items_created')
@@ -57,20 +59,12 @@ class Item(db.Model):
     
     reserved_by_id = db.Column(
         db.Integer,
-        db.ForeignKey('users.id', name='fk_items_reserved_by_id'),  # Added constraint name
+        db.ForeignKey('users.id', name='fk_items_reserved_by_id'),
         nullable=True
     )  # Foreign key: The user reserved the item (optional)
     reserved_by = db.relationship('User', foreign_keys=[reserved_by_id], backref='items_reserved')
     reserved_at = db.Column(db.DateTime, nullable=True)
     reserved_until = db.Column(db.DateTime, nullable=True)
-
-    taken_by_id = db.Column(
-        db.Integer,
-        db.ForeignKey('users.id', name='fk_items_taken_by_id'),  # Added constraint name
-        nullable=True
-    )  # Foreign key: The user who took the item (optional)
-    taken_by = db.relationship('User', foreign_keys=[taken_by_id], backref='items_taken')
-    taken_at = db.Column(db.DateTime, nullable=True)
 
     def to_overview_dict(self):
         return {
@@ -81,6 +75,7 @@ class Item(db.Model):
             "description": self.description,
             "condition": self.condition,
             "box_id": self.box_id,
+            "item_state": self.item_state,
             "reserved_by_id": self.reserved_by_id,
         }
     
@@ -94,13 +89,12 @@ class Item(db.Model):
             "condition": self.condition,
             "weight": self.weight,
             "box_id": self.box_id,
+            "item_state": self.item_state,
             "number_of_views": self.number_of_views,
             "created_by_id": self.created_by_id,
             "created_at": self.created_at,
             "reserved_by_id": self.reserved_by_id,
             "reserved_until": self.reserved_until,
-            "taken_by_id": self.taken_by_id,
-            "taken_at": self.taken_at
         }
 
 

@@ -4,6 +4,8 @@ from backend.models.models import User, Item, Box, Favorite
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, timezone
 
+from backend.services import notify_frontend
+
 ##### BOX #####
 
 def create_box(name, location, box_picture_path, maps_link):
@@ -28,6 +30,15 @@ def get_box_by_id(box_id):
     View box detail.
     """
     return Box.query.get(box_id)
+
+
+def set_box_open_closed(box_id, user_id=None, open=False):
+    box = get_box_by_id(box_id)
+    box.opened = open
+    if user_id:
+        box.opened_by_id = user_id
+    db.session.commit()
+    return box
 
 
 ##### USER #####
@@ -87,7 +98,7 @@ def get_user_by_id(user_id):
 
 ##### ITEM #####
 
-def create_item(image_path, category, title, description, condition, weight, box, created_by):
+def create_item(image_path, category, title, description, condition, weight, box, created_by, item_state="stored"):
     """
     Add a new item to a box.
     """
@@ -101,23 +112,23 @@ def create_item(image_path, category, title, description, condition, weight, box
         weight=weight,
         box=box,
         created_by=created_by,
-        created_at=current_time
+        created_at=current_time,
+        item_state=item_state
     )
     db.session.add(item)
     db.session.commit()
     return item
 
 
-def update_item_as_taken(item_id, taken_by_user_id):
+def update_item_state(item_id, state):
     """
-    Mark a specified item as taken.
+    Mark a specified item with a new state.
     """
     item = Item.query.get(item_id)
     if item:
-        current_time = datetime.now(timezone.utc)
-        item.taken_by_id = taken_by_user_id
-        item.taken_at = current_time
+        item.item_state = state
         db.session.commit()
+        notify_frontend(state)
         return item
     return None
 
@@ -146,7 +157,7 @@ def update_item_as_reserved(item_id, reserved_by_user_id):
     return "success"
 
 
-def update_item(item_id, title, description, category, condition):
+def update_item(item_id, title=None, description=None, category=None, condition=None, image_path=None, item_state=None):
     item = Item.query.get(item_id)
     check_and_update_reservation(item)
     if not item:
@@ -160,6 +171,10 @@ def update_item(item_id, title, description, category, condition):
         item.category = category
     if condition:
         item.condition = condition
+    if image_path:
+        item.image_path = image_path
+    if item_state:
+        item.item_state = item_state
     db.session.commit()
     return item
 

@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-      <footer className="w-full bg-gray-900 text-white py-6 mt-9">
+      <footer className="w-full bg-gray-900 text-white py-6">
         <div className="container mx-auto text-center flex justify-center">
           <p>Smart Giveaway Box.</p>
           <a className="mx-3" href="/boxes">
