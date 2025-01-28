@@ -16,7 +16,7 @@
 
 const char *ssid = SECRET_SSID;
 const char *password = SECRET_PASS;
-const char *camera_server = "172.20.10.4";
+const char *camera_server = SECRET_IP;
 
 WiFiServer server(80);
 
