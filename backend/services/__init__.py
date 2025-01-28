@@ -85,7 +85,15 @@ def register_storage_weight_change(box_id, weight_change):
     state = "stored" if weight_change > 0 else "picked"
     items = determine_item(box_id, weight_change)
     if len(items) == 0:
-        pass # TODO if positive, notify that there was an item added which is unknown
+        if weight_change > 0:
+            notify_frontend({
+                'message': 'You added an unknown item to storage compartment. Please scan the item before putting it inside the scanning compartment.'
+            }, "alert")
+        else:
+            notify_frontend({
+                'message': 'It seems like you have picked more than one item at once. Please put both items back and proceed picking the items one-by-one, so that we know which items you have taken.'
+            }, "alert")
+        return items
     if len(items) == 1:
         item = items[0]
         update_item(item.id, item_state=state)

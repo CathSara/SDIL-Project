@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import ConfusionModal from "./ConfusionModal";
 import { useRouter } from "next/navigation";
 import ScanModal from "./ScanModal";
+import AlertModal from "./AlertModal";
 
 interface Item {
   id: number;
@@ -23,6 +24,8 @@ export default function Header() {
   const [confusionSource, setConfusionSource] = useState("");
   const [isScanModalOpen, setScanIsModalOpen] = useState(false);
   const [scannedItem, setScannedItem] = useState<Item>();
+  const [isAlertModalOpen, setAlertModalOpen] = useState(false);
+  const [alertModalMessage, setAlertModalMessage] = useState("");
   const openedBoxId = getCookie("opened_box_id");
   const userId = getCookie("user_id");
 
@@ -103,6 +106,12 @@ export default function Header() {
       localStorage.removeItem("itemScanData");
     });
 
+    socket.on("alert", (data) => {
+      console.log("alert should be triggered");
+      setAlertModalMessage(data.data.message);
+      setAlertModalOpen(true)
+    });
+
     return () => {
       socket.off("confused");
       socket.off("open");
@@ -170,6 +179,12 @@ export default function Header() {
       />
 
       <ScanModal isOpen={isScanModalOpen} item={scannedItem || defaultItem} />
+
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        text={alertModalMessage}
+        closeModal={() => setAlertModalOpen(false)}
+      ></AlertModal>
     </>
   );
 }
