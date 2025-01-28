@@ -1,30 +1,44 @@
+""""
+This file handles everything related to the camera built into the locker in the following pipeline:
+- Capture an image through the webserver of the camera.
+- Save the image to the 'uploads' folder.
+- Encode the image to a Base64 image.
+- Send the Base64 image to the OpenAI Vision API to recognize the object in the image and return its description, condition etc.
+- Add the image to another object detection model to automatically detect its position and center the image to those coordinates, so that the object is approximately in its center.
+- Update the item based on the taken image and its detected attributes.
+
+Author: Tim Hebestreit
+"""
+
+# Imports:
 from openai import OpenAI
 import base64
 import os
-from ..models.database_service import create_item, update_item
+from ..models.database_service import update_item
 from flask import jsonify
 import requests
 from PIL import Image
-from datetime import datetime
 from dotenv import load_dotenv
-from io import BytesIO
-from PIL import Image
 import torch
 
+# Specify camera server url and save folder:
 CAMERA_URL = "http://172.20.10.4/capture"
 SAVE_DIRECTORY = os.path.join(os.getcwd(), "website-sharingbox", "public", "uploads")
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+""""
+Function capturing an image from the camera and saving it in the 'uploads' folder.
+Afterwards, the encode_image() function is called to move further along the item image pipeline.
+
+Input: 
+item_id: Unique id value of the item , which is newly created immediately before. For the item associated with this id, the image and item info will be added.
+"""
 def capture_image_for_item(item_id):
     try:
         response = requests.get(CAMERA_URL, timeout=10)
         response.raise_for_status()
+        
         filename = f"{item_id}.png"
-
         filepath = os.path.join(SAVE_DIRECTORY, filename)
 
         os.makedirs(SAVE_DIRECTORY, exist_ok=True)
@@ -49,7 +63,6 @@ def encode_image(item_id, item_image_path):
     # Encode image file to Base64 string
     with open(file_path, "rb") as image_file:
         base64_image = base64.b64encode(image_file.read()).decode("utf-8")
-    #return f"data:image/jpeg;base64,{base64_image}"
     analyze_image(item_id, base64_image, item_image_path)
 
 
