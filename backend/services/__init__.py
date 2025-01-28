@@ -33,11 +33,11 @@ def open_box(box_id, user_id):
 def confirm_box_open(box_id):
     from backend.models.database_service import set_box_open_closed, get_box_by_id
     box = get_box_by_id(box_id)
-    set_box_open_closed(box_id, None, True)
     notify_frontend({
         'box_id': box_id,
         'user_id': box.opened_by_id
     }, "open")
+    set_box_open_closed(box_id, True)
     print("box with id", box_id, "has been opened")
 
 

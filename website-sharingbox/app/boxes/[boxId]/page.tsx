@@ -58,6 +58,7 @@ export default function Page({
 
   // Used help in ChatGPT and https://arduinogetstarted.com/tutorials/arduino-controls-door-lock-via-web
   // to create the function for a button that correctly connects with the Arduino UNO R4 Wifi and posts requests to it to control the lock
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const unlockDoor = async () => {
       try {
         const lockStatus = 'door/unlock'
@@ -118,7 +119,7 @@ export default function Page({
                             onClick={(e) => {
                               e.preventDefault(); // Prevent default behavior
                               openBox(); // Call openBox
-                              unlockDoor(); // Call unlockDoor
+                              //unlockDoor(); // Call unlockDoor
                             }}
                             className="px-20 bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green mt-5"
                           >

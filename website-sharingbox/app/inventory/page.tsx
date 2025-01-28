@@ -76,8 +76,8 @@ export default function Page() {
     });
 
     socket.on("close", () => {
-      fetchItems();
       setSelectedCategory("");
+      handleSearch();
     });
 
     return () => {
