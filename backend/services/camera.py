@@ -53,10 +53,10 @@ def capture_image_for_item(item_id):
           item = update_item(item_id, image_path="/uploads/"+filename)
           encode_image(item.id, item.image_path) # Calls encode_image function as next step of pipeline.
         else:
-          return jsonify({"message": "Fehler beim Aufnehmen des Bildes"}), 500
+          print("Fehler beim Aufnehmen des Bildes")
 
     except requests.exceptions.RequestException as e:
-        return jsonify({"message": f"Fehler beim Abrufen des Bildes: {e}"}), 500
+        print("Fehler beim Abrufen des Bildes")
 
 
 """"
