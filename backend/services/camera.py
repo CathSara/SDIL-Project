@@ -15,6 +15,7 @@ from openai import OpenAI
 import base64
 import os
 from ..models.database_service import update_item
+from backend.services import notify_frontend
 from flask import jsonify
 import requests
 from PIL import Image
@@ -36,6 +37,7 @@ item_id: Unique id value of the item , which is newly created immediately before
 Calls encode_image as next step of the pipeline.
 """
 def capture_image_for_item(item_id):
+    print("In function")
     try:
         response = requests.get(CAMERA_URL, timeout=10)
         response.raise_for_status()
@@ -52,10 +54,10 @@ def capture_image_for_item(item_id):
           item = update_item(item_id, image_path="/uploads/"+filename)
           encode_image(item.id, item.image_path) # Calls encode_image function as next step of pipeline.
         else:
-          return jsonify({"message": "Fehler beim Aufnehmen des Bildes"}), 500
+          print("Fehler beim Aufnehmen des Bildes")
 
     except requests.exceptions.RequestException as e:
-        return jsonify({"message": f"Fehler beim Abrufen des Bildes: {e}"}), 500
+        print("Fehler beim Abrufen des Bildes")
 
 
 """"
@@ -165,7 +167,21 @@ def analyze_image(item_id, base64_image, item_image_path):
     print(item)
   else:
     print("The item with the detected type " + str(result["object_type"]) + " was not allowed.")
-    item = update_item(item_id, image_path=item_image_path, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"], item_state="disallowed")
+    notify_frontend({
+        "id": item_id
+    }, "not_allowed_item_scan")
+    file_path = os.getcwd() + "/website-sharingbox/public/" + item_image_path
+    file_path = file_path.replace("\\","/")
+    try:
+    # Check if the file exists
+      if os.path.exists(file_path):
+          # Delete the file
+          os.remove(file_path)
+          print(f"File {file_path} deleted successfully.")
+      else:
+          print(f"File {file_path} does not exist.")
+    except Exception as e:
+      print(f"An error occurred: {e}")
     
 
 """"
