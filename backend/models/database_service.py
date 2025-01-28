@@ -256,6 +256,19 @@ def get_item_by_id(item_id):
     return item
 
 
+def delete_item_by_id(item_id):
+    """
+    Deletes an item by its ID.
+    """
+    item = Item.query.get(item_id)
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+        return True
+    return False
+
+
+
 def get_items(box_id=None, category=None, search_string=None):
     """
     Retrieves all items, optionally filtered by box, category, or search_string.

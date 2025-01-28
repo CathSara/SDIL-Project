@@ -44,8 +44,7 @@ def confirm_box_open(box_id):
 def close_box(box_id):
     from backend.models.database_service import set_box_open_closed
     set_box_open_closed(box_id, False)
-    # go through items in this box id and set taken by status
-    # notify frontend that box has been closed
+    clear_picked_unstored_items(box_id) # remving picked items, and items that have been scanned but never stored after closing the box
     notify_frontend({
         'box_id': box_id,
     }, "close")
@@ -145,3 +144,12 @@ def determine_item(box_id, weight_change):
         print("item_id", item.id, "item_state", item.item_state)
     
     return filtered_items
+
+
+def clear_picked_unstored_items(box_id):
+    from backend.models.database_service import get_items, delete_item_by_id
+    items = get_items(box_id=box_id)
+    
+    for item in items:
+        if item.item_state == "scanned" or item.item_state == "picked":
+            delete_item_by_id(item.id)
