@@ -58,7 +58,7 @@ In order to use the smart giveaway box, you require the following:
     - When you close the door, the item will be fully removed from the inventory.
 7. If you **donate** an item to the box,
     - you are required to put it on the **scan shelf** first to let the box take a picture of the item, save its weight and automatically recognize the item.
-    - An item is allowed to be put in the **storage shelf** for donation if it is a material good that is **not** a food item and **not** in poor condition.
+    - An item is allowed to be put on the **storage shelf** for donation if it is a material good that is **not** a food item and **not** in poor condition.
     - The allowance of an item is determined by the integrated item recognition by OpenAI.
     - If the item is allowed, put it in the box and it will be saved in the inventory.
 8. Close the door after using the box. The open "tongue" of the lock will be pushed inside by the built-in door latch plate and stay locked within that plate.
@@ -69,7 +69,7 @@ In order to use the smart giveaway box, you require the following:
   - On the website, a pop up message will appear where you have to choose which item you took out of the two.
   - You will not be able to proceed further on the website if you do not choose anything.
   - If you just take the item anyway, the host or the next user will be asked to choose which item is still in the box.
-- If you donate an item to the box and do not put it in the scan shelf, but immediately in the storage shelf:
+- If you donate an item to the box and do not put it on the scan shelf, but immediately on the storage shelf:
   - The increased weight will still be detected by the box.
   - The host or the next user will be asked to take the item that is not in the inventory and remove it or put it on the scan shelf for the item recognition.
 
