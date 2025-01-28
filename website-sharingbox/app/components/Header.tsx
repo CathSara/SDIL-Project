@@ -4,6 +4,7 @@ import ConfusionModal from "./ConfusionModal";
 import { useRouter } from "next/navigation";
 import ScanModal from "./ScanModal";
 import AlertModal from "./AlertModal";
+import SlideTourModal from "./SlideTourModal";
 
 interface Item {
   id: number;
@@ -26,6 +27,7 @@ export default function Header() {
   const [scannedItem, setScannedItem] = useState<Item>();
   const [isAlertModalOpen, setAlertModalOpen] = useState(false);
   const [alertModalMessage, setAlertModalMessage] = useState("");
+  const [isTourModalVisible, setTourModalVisible] = useState(false);
   const openedBoxId = getCookie("opened_box_id");
   const userId = getCookie("user_id");
 
@@ -39,6 +41,10 @@ export default function Header() {
   };
 
   useEffect(() => {
+    if (!getCookie("tutorial_seen")) {
+      setTourModalVisible(true);
+    }
+
     socket.on("confused", (data) => {
       console.log("received item_update confused");
       if (openedBoxId) {
@@ -109,7 +115,7 @@ export default function Header() {
     socket.on("alert", (data) => {
       console.log("alert should be triggered");
       setAlertModalMessage(data.data.message);
-      setAlertModalOpen(true)
+      setAlertModalOpen(true);
     });
 
     return () => {
@@ -153,6 +159,10 @@ export default function Header() {
     return null;
   }
 
+  function saveTutorialDone() {
+    document.cookie = `tutorial_seen=true; path=/;`;
+  }
+
   return (
     <>
       <header className="w-full bg-mint-green text-dark-green shadow-lg">
@@ -185,6 +195,11 @@ export default function Header() {
         text={alertModalMessage}
         closeModal={() => setAlertModalOpen(false)}
       ></AlertModal>
+
+      <SlideTourModal
+        isOpen={isTourModalVisible}
+        closeModal={() => {setTourModalVisible(false); saveTutorialDone();}}
+      ></SlideTourModal>
     </>
   );
 }
