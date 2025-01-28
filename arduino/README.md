@@ -53,6 +53,7 @@ This guide provides step by step instructions to build the box equipped with a l
 ## Troubleshooting
 
 - **General Issues with the Systems**: Make sure you have followed the instructions in the respective README's.
-- **Lock System Not Opening**: Ensure all cables are securely connected and the power supply is functional.
-- **Camera Not Detecting**: Verify the camera's alignment and power connection.
+- **Connectivity Issues**: Verify that both the technological components inside the box and the device running the website are both connected to the same stable WiFi network.
+- **Lock System Not Opening**: Check that all cables are securely connected and that the power supply is functional.
+- **Camera Not Detecting**: Confirm the camera's alignment and power connection.
 - **Weight Sensor Issues**: Ensure sensors are mounted flat against the shelf and calibrated correctly.
