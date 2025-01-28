@@ -48,7 +48,7 @@ This guide provides step by step instructions to build the box equipped with a l
 
 - Double-check all cable connections before attaching the hardware components on the box.
 - Test the lock system, camera system, and weight sensor systems after installation to ensure functionality.
-- Use a storage box to protect technological components and reduce cable clutter.
+- It is highly recommended to use a storage box to protect technological components and reduce cable clutter.
 
 ## Troubleshooting
 
