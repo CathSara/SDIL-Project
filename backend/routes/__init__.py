@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from backend.services import register_storage_weight_change, notify_frontend
-from ..models.database_service import get_all_boxes, get_all_users, get_items, update_item_state, get_item_by_id
+from ..models.database_service import get_all_boxes, get_all_users, get_items, get_item_by_id, update_item
 
 main = Blueprint('main', __name__)
 
@@ -47,8 +47,9 @@ def say_hi():
 def item_status():
     item_id = request.args.get("item_id", None)
     state = request.args.get("state", None)
+    print("calling item status")
     
-    item = update_item_state(item_id, state)
+    item = update_item(item_id, item_state=state)
     return jsonify(item.to_detail_dict())
 
 

@@ -3,6 +3,8 @@ import { io } from "socket.io-client";
 import ConfusionModal from "./ConfusionModal";
 import { useRouter } from "next/navigation";
 import ScanModal from "./ScanModal";
+import AlertModal from "./AlertModal";
+import SlideTourModal from "./SlideTourModal";
 
 interface Item {
   id: number;
@@ -23,6 +25,9 @@ export default function Header() {
   const [confusionSource, setConfusionSource] = useState("");
   const [isScanModalOpen, setScanIsModalOpen] = useState(false);
   const [scannedItem, setScannedItem] = useState<Item>();
+  const [isAlertModalOpen, setAlertModalOpen] = useState(false);
+  const [alertModalMessage, setAlertModalMessage] = useState("");
+  const [isTourModalVisible, setTourModalVisible] = useState(false);
   const openedBoxId = getCookie("opened_box_id");
   const userId = getCookie("user_id");
 
@@ -36,6 +41,10 @@ export default function Header() {
   };
 
   useEffect(() => {
+    if (!getCookie("tutorial_seen")) {
+      setTourModalVisible(true);
+    }
+
     socket.on("confused", (data) => {
       console.log("received item_update confused");
       if (openedBoxId) {
@@ -85,7 +94,28 @@ export default function Header() {
     socket.on("item_scan", (data) => {
       console.log("received item scan", data.data.image_path);
       setScannedItem(data.data);
-      setScanIsModalOpen(true)
+      setScanIsModalOpen(true);
+      localStorage.setItem("itemScanData", JSON.stringify(data.data));
+    });
+
+    // Check for persisted confusion state on page load
+    const savedItemScanData = localStorage.getItem("itemScanData");
+    if (savedItemScanData) {
+      const parsedData = JSON.parse(savedItemScanData);
+      setScannedItem(parsedData);
+      setScanIsModalOpen(true);
+    }
+
+    socket.on("item_scan_stored", () => {
+      console.log("item scan has been stored");
+      setScanIsModalOpen(false);
+      localStorage.removeItem("itemScanData");
+    });
+
+    socket.on("alert", (data) => {
+      console.log("alert should be triggered");
+      setAlertModalMessage(data.data.message);
+      setAlertModalOpen(true);
     });
 
     return () => {
@@ -93,6 +123,7 @@ export default function Header() {
       socket.off("open");
       socket.off("close");
       socket.off("item_scan");
+      socket.off("item_scan_stored");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -128,6 +159,10 @@ export default function Header() {
     return null;
   }
 
+  function saveTutorialDone() {
+    document.cookie = `tutorial_seen=true; path=/;`;
+  }
+
   return (
     <>
       <header className="w-full bg-mint-green text-dark-green shadow-lg">
@@ -154,6 +189,17 @@ export default function Header() {
       />
 
       <ScanModal isOpen={isScanModalOpen} item={scannedItem || defaultItem} />
+
+      <AlertModal
+        isOpen={isAlertModalOpen}
+        text={alertModalMessage}
+        closeModal={() => setAlertModalOpen(false)}
+      ></AlertModal>
+
+      <SlideTourModal
+        isOpen={isTourModalVisible}
+        closeModal={() => {setTourModalVisible(false); saveTutorialDone();}}
+      ></SlideTourModal>
     </>
   );
 }

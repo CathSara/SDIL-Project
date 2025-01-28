@@ -98,11 +98,12 @@ def get_user_by_id(user_id):
 
 ##### ITEM #####
 
-def create_item(image_path, category, title, description, condition, weight, box, created_by, item_state="stored"):
+def create_item(image_path, category, title, description, condition, weight, box, created_by, item_state):
     """
     Add a new item to a box.
     """
     current_time = datetime.now(timezone.utc)
+    box_object = get_box_by_id(box)
     item = Item(
         image_path=image_path,
         category=category,
@@ -110,7 +111,7 @@ def create_item(image_path, category, title, description, condition, weight, box
         description=description,
         condition=condition,
         weight=weight,
-        box=box,
+        box=box_object,
         created_by=created_by,
         created_at=current_time,
         item_state=item_state
@@ -129,6 +130,15 @@ def update_item_state(item_id, state):
         item.item_state = state
         db.session.commit()
         notify_frontend(state)
+        if state == "scanned":
+            notify_frontend({
+                "id": item.id,
+                "image_path": item.image_path,
+                "category": item.category,
+                "title": item.title,
+                "description": item.description,
+                "condition": item.condition,
+            }, "item_scan")
         return item
     return None
 
@@ -174,6 +184,29 @@ def update_item(item_id, title=None, description=None, category=None, condition=
     if image_path:
         item.image_path = image_path
     if item_state:
+        notify_frontend(item_state)
+        if item_state == "scanned":
+            notify_frontend({
+                "id": item.id,
+                "image_path": item.image_path,
+                "category": item.category,
+                "title": item.title,
+                "description": item.description,
+                "condition": item.condition,
+            }, "item_scan")
+        if item_state == "stored" and item.item_state == "scanned": # i.e., state transtition from scanned to stored
+            notify_frontend({
+                "id": item.id,
+                "image_path": item.image_path,
+                "category": item.category,
+                "title": item.title,
+                "description": item.description,
+                "condition": item.condition,
+            }, "item_scan_stored")
+        if item_state == "disallowed":
+            notify_frontend({
+                "id": item.id
+            }, "not_allowed_item_scan")
         item.item_state = item_state
     db.session.commit()
     return item
@@ -221,6 +254,19 @@ def get_item_by_id(item_id):
         item.number_of_views += 1
         db.session.commit()
     return item
+
+
+def delete_item_by_id(item_id):
+    """
+    Deletes an item by its ID.
+    """
+    item = Item.query.get(item_id)
+    if item:
+        db.session.delete(item)
+        db.session.commit()
+        return True
+    return False
+
 
 
 def get_items(box_id=None, category=None, search_string=None):

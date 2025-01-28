@@ -40,7 +40,7 @@ export default function Page({
       .then((response) => response.json())
       .then((data) => setBox(data))
       .catch((error) => console.error("Error fetching box details:", error));
-  });
+  }, []);
 
   const getUserId = () => {
     const user_id_from_cookie = getCookie("user_id");
@@ -58,11 +58,12 @@ export default function Page({
 
   // Used help in ChatGPT and https://arduinogetstarted.com/tutorials/arduino-controls-door-lock-via-web
   // to create the function for a button that correctly connects with the Arduino UNO R4 Wifi and posts requests to it to control the lock
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const unlockDoor = async () => {
       try {
         const lockStatus = 'door/unlock'
         const response = await fetch(`${arduinoIP}`, {
-          method: "POST",
+      method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lockStatus }),
         });
@@ -76,7 +77,7 @@ export default function Page({
        } catch (error) {
          console.error("Error communicating with the Arduino:", error);
        }
-    };
+  };
 
   function getCookie(name: string) {
     const cookies = document.cookie.split("; ");
@@ -118,7 +119,7 @@ export default function Page({
                             onClick={(e) => {
                               e.preventDefault(); // Prevent default behavior
                               openBox(); // Call openBox
-                              unlockDoor(); // Call unlockDoor
+                              //unlockDoor(); // Call unlockDoor
                             }}
                             className="px-20 bg-dark-green text-white py-3 px-6 rounded-lg text-lg hover:bg-dark-green-hover focus:outline-none focus:ring-2 focus:ring-dark-green mt-5"
                           >

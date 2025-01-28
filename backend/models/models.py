@@ -41,7 +41,7 @@ class Item(db.Model):
     condition = db.Column(db.String(50), nullable=False)
     weight = db.Column(db.Float, nullable=False)
     number_of_views = db.Column(db.Integer, default=0)
-    item_state = db.Column(db.String(20), nullable=False, default='stored') # ["created", "scanned", "stored", "picked", "taken"]
+    item_state = db.Column(db.String(20), nullable=False) # ["created", "scanned", "stored", "picked", "taken"]
 
     box_id = db.Column(
         db.Integer,
