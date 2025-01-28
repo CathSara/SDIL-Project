@@ -26,7 +26,7 @@ In order to use the smart giveaway box, you require the following:
 - [Set up the frontend](https://github.com/CathSara/SDIL-Project/tree/main/website-sharingbox)
 - [Build the box](https://github.com/CathSara/SDIL-Project/tree/main/arduino)
   - [Build the lock system](https://github.com/CathSara/SDIL-Project/tree/main/arduino/lock_system)
-  - [Build the camera system](https://github.com/CathSara/SDIL-Project/tree/main/arduino/camera_system)
+  - [Build the camera system](https://github.com/CathSara/SDIL-Project/tree/main/arduino/camera)
   - [Build the weight sensor system](https://github.com/CathSara/SDIL-Project/tree/main/arduino/weight_sensor)
 
 ## Usage
