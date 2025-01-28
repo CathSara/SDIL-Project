@@ -40,7 +40,7 @@ export default function Page({
       .then((response) => response.json())
       .then((data) => setBox(data))
       .catch((error) => console.error("Error fetching box details:", error));
-  });
+  }, []);
 
   const getUserId = () => {
     const user_id_from_cookie = getCookie("user_id");
@@ -62,7 +62,7 @@ export default function Page({
       try {
         const lockStatus = 'door/unlock'
         const response = await fetch(`${arduinoIP}`, {
-          method: "POST",
+      method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lockStatus }),
         });
@@ -76,7 +76,7 @@ export default function Page({
        } catch (error) {
          console.error("Error communicating with the Arduino:", error);
        }
-    };
+  };
 
   function getCookie(name: string) {
     const cookies = document.cookie.split("; ");

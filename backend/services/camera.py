@@ -165,14 +165,6 @@ def analyze_image(item_id, base64_image, item_image_path):
     # Update the item with the new detected features and the cropped image, and then notify the frontend about the change:
     item = update_item(item_id, image_path=item_image_path, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"], item_state="scanned")
     print(item)
-    notify_frontend({
-        "id": item.id,
-        "image_path": item.image_path,
-        "category": item.category,
-        "title": item.title,
-        "description": item.description,
-        "condition": item.condition,
-    }, "item_scan")
   else:
     print("The item with the detected type " + str(result["object_type"]) + " was not allowed.")
     notify_frontend({

@@ -85,7 +85,22 @@ export default function Header() {
     socket.on("item_scan", (data) => {
       console.log("received item scan", data.data.image_path);
       setScannedItem(data.data);
-      setScanIsModalOpen(true)
+      setScanIsModalOpen(true);
+      localStorage.setItem("itemScanData", JSON.stringify(data.data));
+    });
+
+    // Check for persisted confusion state on page load
+    const savedItemScanData = localStorage.getItem("itemScanData");
+    if (savedItemScanData) {
+      const parsedData = JSON.parse(savedItemScanData);
+      setScannedItem(parsedData);
+      setScanIsModalOpen(true);
+    }
+
+    socket.on("item_scan_stored", () => {
+      console.log("item scan has been stored");
+      setScanIsModalOpen(false);
+      localStorage.removeItem("itemScanData");
     });
 
     return () => {
@@ -93,6 +108,7 @@ export default function Header() {
       socket.off("open");
       socket.off("close");
       socket.off("item_scan");
+      socket.off("item_scan_stored");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

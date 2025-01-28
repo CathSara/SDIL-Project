@@ -1,8 +1,9 @@
 from flask_socketio import emit # type: ignore
-
+import requests # type: ignore
 
 socketio = None
 min_precision = 5 # +/- 5 miligrams accuracy
+demo = True
 
 def init_services(socketio_instance):
     global socketio
@@ -13,7 +14,20 @@ def open_box(box_id, user_id):
     from backend.models.database_service import set_box_open_closed
     set_box_open_closed(box_id, user_id, False)
     print("box with id", box_id, "has been notified to be opened")
-    # TODO send open box request to arduino
+    
+    if not demo:
+        url = 'http://172.20.10.14'
+
+        try:
+            headers = {'Content-Type': 'text/plain'}
+            response = requests.post(url, data='door/unlock', headers=headers, timeout=5)
+
+            if response.status_code == 200:
+                print("The door has been unlocked successfully.")
+            else:
+                print(f"Failed to unlock the door. Status code: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error sending request: {e}")
         
 
 def confirm_box_open(box_id):
@@ -41,12 +55,13 @@ def close_box(box_id):
 def notify_frontend(item_status, message='item_update'):
     from . import socketio
     socketio.emit(message, {'data': item_status})
+    print("Notifying frontend about", message, "with data:", item_status)
     
     
 def resolve_conflict(item_id, confusion_source):
-    from backend.models.database_service import get_item_by_id, update_item_state
+    from backend.models.database_service import get_item_by_id, update_item
     item = get_item_by_id(item_id)
-    update_item_state(item.id, confusion_source)
+    update_item(item.id, item_state=confusion_source)
     notify_frontend(confusion_source)
     return item
 
@@ -65,7 +80,7 @@ def register_scanning_weight_change(box_id, weight_change):
         
     
 def register_storage_weight_change(box_id, weight_change):
-    from backend.models.database_service import update_item_state
+    from backend.models.database_service import update_item
     weight_change = int(weight_change)
     state = "stored" if weight_change > 0 else "picked"
     items = determine_item(box_id, weight_change)
@@ -73,7 +88,7 @@ def register_storage_weight_change(box_id, weight_change):
         pass # TODO if positive, notify that there was an item added which is unknown
     if len(items) == 1:
         item = items[0]
-        update_item_state(item.id, state)
+        update_item(item.id, item_state=state)
         notify_frontend(state)
         return items
     else: # handle multiple items in question
@@ -112,4 +127,13 @@ def determine_item(box_id, weight_change):
         item for item in items
         if not (abs(item.weight - abs(weight_change)) > min_precision or item.item_state != state_filter)
     ]
+    
+    for item in items:
+        if (abs(item.weight - abs(weight_change)) < min_precision and item.item_state=="scanned"):
+            filtered_items.append(item)
+            
+    print("filtered items:")
+    for item in filtered_items:
+        print("item_id", item.id, "item_state", item.item_state)
+    
     return filtered_items
