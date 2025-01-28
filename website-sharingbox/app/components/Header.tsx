@@ -174,7 +174,6 @@ export default function Header() {
         {openedBoxId && userId ? (
           <div className="top-0 left-0 w-full bg-dark-green text-white text-center py-2 font-bold z-50">
             The box is open - please close it after you are done.
-            {scannedItem?.title}
           </div>
         ) : (
           <div></div>
