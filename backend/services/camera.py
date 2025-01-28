@@ -15,6 +15,7 @@ from openai import OpenAI
 import base64
 import os
 from ..models.database_service import update_item
+from backend.services import notify_frontend
 from flask import jsonify
 import requests
 from PIL import Image
@@ -164,7 +165,6 @@ def analyze_image(item_id, base64_image, item_image_path):
     # Update the item with the new detected features and the cropped image, and then notify the frontend about the change:
     item = update_item(item_id, image_path=item_image_path, category=result["category"], condition=result["condition"], title=result["title"], description=result["description"], item_state="scanned")
     print(item)
-    from backend.services import notify_frontend
     notify_frontend({
         "id": item.id,
         "image_path": item.image_path,
@@ -176,9 +176,20 @@ def analyze_image(item_id, base64_image, item_image_path):
   else:
     print("The item with the detected type " + str(result["object_type"]) + " was not allowed.")
     notify_frontend({
-        "id": item.id
+        "id": item_id
     }, "not_allowed_item_scan")
-    # TODO delete item
+    file_path = os.getcwd() + "/website-sharingbox/public/" + item_image_path
+    file_path = file_path.replace("\\","/")
+    try:
+    # Check if the file exists
+      if os.path.exists(file_path):
+          # Delete the file
+          os.remove(file_path)
+          print(f"File {file_path} deleted successfully.")
+      else:
+          print(f"File {file_path} does not exist.")
+    except Exception as e:
+      print(f"An error occurred: {e}")
     
 
 """"
